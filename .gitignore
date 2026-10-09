@@ -1,0 +1,24 @@
+# secrets and local state
+.env
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+data/
+uploads/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# tooling
+node_modules/
+.claude/scratchpad.md
+.claude/settings.local.json
+
+# harness temp
+.claude/tmp/
+docs/.claude/
