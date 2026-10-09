@@ -44,7 +44,7 @@ async function doBootstrap() {
   S.csrf = data.csrf_token || S.csrf;
   S.me = normalizeMe(data.user);
   S.isGuest = data.is_guest ?? !(data.user && data.user.kind === "registered");
-  S.gate = data.gate || null;
+  S.gate = data.gate && data.gate.reason ? data.gate.reason : null;
   if (data.config) S.config = data.config;
   if (!S.config) {
     const c = await fetch("/api/config", { credentials: "same-origin" });
@@ -121,7 +121,7 @@ export function startHeartbeat(onGate) {
     if (document.hidden) return;
     try {
       const r = await post("/api/session/heartbeat");
-      if (r && r.gate === "second_visit" && S.gate !== "second_visit") {
+      if (r && r.gate && r.gate.reason === "second_visit" && S.gate !== "second_visit") {
         S.gate = "second_visit";
         onGate();
       }

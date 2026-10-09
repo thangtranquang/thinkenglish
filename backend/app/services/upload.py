@@ -7,11 +7,13 @@ from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 
+from ..ai.provider import select_provider
 from ..ai.schema import AnalysisResult
 from ..clock import Clock, iso
 from ..config import Settings
 from ..db import connect, transaction
 from ..errors import AppError
+from ..repositories import cards as cards_repo
 from ..repositories import content as repo
 from ..seed import audio_name
 from . import imaging, policy, storage
@@ -89,6 +91,41 @@ def current_status(conn: sqlite3.Connection, settings: Settings, clock: Clock, c
     return repo.get_content(conn, content_id)
 
 
+def provider_for(state):
+    """The app-wide AI provider (Gemini only when a key is configured, else the mock)."""
+    if state.provider is None:
+        state.provider = select_provider(state.settings.gemini_api_key)
+    return state.provider
+
+
+def upload_out(conn: sqlite3.Connection, user_id: str, result) -> dict:
+    return {"content_id": result.content_id, "status": result.status, "dedupe": result.dedupe,
+            "ai_calls": result.ai_calls,
+            "card_id": cards_repo.find_by_owner_content(conn, user_id, result.content_id)}
+
+
+def claimed_content(conn: sqlite3.Connection, settings: Settings, clock: Clock, user_id: str,
+                    content_id: str) -> dict:
+    """Content the user uploaded (claim required, else 404 like a missing id)."""
+    if not repo.claim_exists(conn, user_id, content_id):
+        raise AppError(404, "not_found")
+    return current_status(conn, settings, clock, content_id)
+
+
+def status_out(conn: sqlite3.Connection, user_id: str, content: dict) -> dict:
+    from . import cards as cards_svc  # local import: the cards service does not depend on uploads
+    out = {"content_id": content["id"], "status": content["status"], "ai_calls": content["ai_calls"],
+           "retryable": content["status"] == "failed" and content["ai_calls"] < MAX_AI_CALLS,
+           "card_id": cards_repo.find_by_owner_content(conn, user_id, content["id"])}
+    if content["status"] == "ready":
+        labels = repo.labels_for(conn, [content["id"]])[content["id"]]
+        out.update(topic=content["topic"], cefr_level=content["cefr_level"],
+                   image_url=f"/api/uploads/{content['id']}/image",
+                   labels=[cards_svc.label_detail(lab) for lab in labels],
+                   sentences=[cards_svc.sentence_out(s) for s in repo.sentences_for(conn, content["id"])])
+    return out
+
+
 def _audio_or_none(text: str) -> str | None:
     name = audio_name(text)
     return name if (AUDIO_DIR / name).exists() else None
@@ -120,24 +157,31 @@ def run_analysis(settings: Settings, provider, content_id: str) -> None:
     """Background job (runs in a worker thread with its own connection)."""
     conn = connect(settings.db_path)
     try:
-        content = repo.get_content(conn, content_id)
-        if content is None:
-            return
-        image = (Path(settings.data_dir).resolve() / content["storage_path"]).read_bytes()
-        error = "analysis_failed"
-        for _ in range(ATTEMPTS_PER_RUN):
+        try:
+            _analyse(conn, settings, provider, content_id)
+        except Exception:  # never leave the row stuck in 'processing'
             with transaction(conn):
-                calls = repo.get_content(conn, content_id)["ai_calls"]
-                if calls >= MAX_AI_CALLS:
-                    break
-                repo.bump_ai_calls(conn, content_id)  # committed BEFORE the provider call
-            try:
-                result = provider.analyze(image)
-            except Exception:  # provider failure of any kind counts as a failed attempt
-                continue
-            _store(conn, content_id, result, type(provider).__name__)
-            return
-        with transaction(conn):
-            repo.mark_failed(conn, content_id, error)
+                repo.mark_failed(conn, content_id, "analysis_failed")
     finally:
         conn.close()
+
+
+def _analyse(conn: sqlite3.Connection, settings: Settings, provider, content_id: str) -> None:
+    content = repo.get_content(conn, content_id)
+    if content is None:
+        return
+    image = (Path(settings.data_dir).resolve() / content["storage_path"]).read_bytes()
+    for _ in range(ATTEMPTS_PER_RUN):
+        with transaction(conn):
+            calls = repo.get_content(conn, content_id)["ai_calls"]
+            if calls >= MAX_AI_CALLS:
+                break
+            repo.bump_ai_calls(conn, content_id)  # committed BEFORE the provider call
+        try:
+            result = provider.analyze(image)
+        except Exception:  # provider failure of any kind counts as a failed attempt
+            continue
+        _store(conn, content_id, result, type(provider).__name__)
+        return
+    with transaction(conn):
+        repo.mark_failed(conn, content_id, "analysis_failed")

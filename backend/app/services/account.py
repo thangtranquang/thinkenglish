@@ -23,3 +23,16 @@ def delete_account(conn: sqlite3.Connection, clock: Clock, settings: Settings, u
         users.delete(conn, user["id"])
         paths = gc.gc_orphans(conn, clock)
     gc.unlink_files(settings, paths)
+
+
+def get_user(conn: sqlite3.Connection, user_id: str) -> dict:
+    return users.get(conn, user_id)
+
+
+def update_profile(conn: sqlite3.Connection, user_id: str, avatar_key: str | None,
+                   cefr_level: str | None) -> None:
+    users.update_profile(conn, user_id, avatar_key, cefr_level)
+
+
+def set_hide_timer(conn: sqlite3.Connection, user_id: str, value: bool) -> None:
+    users.set_hide_timer(conn, user_id, value)

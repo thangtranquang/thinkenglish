@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, Request, Response
 
 from .. import deps
 from ..errors import AppError
-from ..repositories import users
 from ..schemas.auth import LoginIn, RegisterIn
 from ..schemas.session import MeOut
+from ..services import account as account_service
 from ..services import auth as auth_service
 from ..services import practice as practice_service
 from . import health_config
@@ -37,7 +37,7 @@ def register(data: RegisterIn, request: Request, response: Response, _limit: Non
         raise AppError(401, "no_session")
     token = auth_service.register(conn, clock, settings, user.row, data, health_config.AVATARS)
     _open_session(response, settings, token)
-    row = users.get(conn, user.id)
+    row = account_service.get_user(conn, user.id)
     return MeOut.from_row(row, practice_service.profile_stats(conn, clock, row["id"]))
 
 

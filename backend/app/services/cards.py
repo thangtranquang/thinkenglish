@@ -58,7 +58,7 @@ def merged_labels(base: list[dict], overrides_json: str | None) -> list[dict]:
     return out
 
 
-def _label_detail(lab: dict) -> dict:
+def label_detail(lab: dict) -> dict:
     return {"id": lab["id"], "word": lab["word"], "ipa": lab["ipa"], "vi_meaning": lab["vi_meaning"],
             "x": lab["x"], "y": lab["y"], "accepted_answers": json.loads(lab["accepted_answers"] or "[]"),
             "audio_url": _audio(lab["audio_file"])}
@@ -91,7 +91,7 @@ def detail(conn: sqlite3.Connection, viewer_id: str, row: dict) -> dict:
         "is_mine": row["owner_id"] == viewer_id, "saved": bool(row["saved"]),
         "mastery": mastery_for(conn, viewer_id, [row["id"]])[row["id"]], "image_url": image_url(row["id"]),
         "unlocked_levels": practice_repo.unlocked_levels(conn, viewer_id, row["id"]),
-        "labels": [_label_detail(lab) for lab in merged_labels(labels, row["label_overrides"])],
+        "labels": [label_detail(lab) for lab in merged_labels(labels, row["label_overrides"])],
         "sentences": [sentence_out(s) for s in content_repo.sentences_for(conn, row["content_id"])],
     }
 

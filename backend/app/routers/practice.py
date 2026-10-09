@@ -1,4 +1,6 @@
 """POST /api/attempts and the reflex session endpoints."""
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, Request, Response
 
 from .. import deps
@@ -28,6 +30,6 @@ def start_reflex(data: ReflexStartIn, request: Request,
 
 
 @router.post("/reflex/sessions/{session_id}/complete", response_model=ReflexCompleteOut)
-def complete_reflex(session_id: str, request: Request,
+def complete_reflex(session_id: UUID, request: Request,
                     user: deps.CurrentUser = Depends(deps.not_gated_user)) -> dict:
-    return service.complete_reflex(user.conn, deps.clock_of(request), user.row, session_id)
+    return service.complete_reflex(user.conn, deps.clock_of(request), user.row, str(session_id))

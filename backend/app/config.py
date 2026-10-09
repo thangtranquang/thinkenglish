@@ -1,8 +1,9 @@
 """Settings read from the environment. No secrets in code; everything is overridable for tests."""
 import os
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Mapping
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -12,7 +13,7 @@ class Settings:
     app_origin: str = "http://localhost:8000"
     data_dir: Path = ROOT / "data"
     db_path: Path = ROOT / "data" / "reflex.db"
-    gemini_api_key: str | None = None
+    gemini_api_key: str | None = field(default=None, repr=False)
     session_idle_seconds: int = 1800
     guest_free_sessions: int = 1
     login_fail_per_nickname: int = 5
@@ -28,7 +29,7 @@ class Settings:
     @property
     def is_local(self) -> bool:
         """True on localhost, where cookies cannot be Secure."""
-        return self.app_origin.startswith(("http://localhost", "http://127.0.0.1", "http://[::1]"))
+        return urlsplit(self.app_origin).hostname in {"localhost", "127.0.0.1", "::1"}
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> "Settings":

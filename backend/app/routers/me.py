@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends, Request, Response
 
 from .. import deps
 from ..errors import AppError
-from ..repositories import users
 from ..schemas.me import DeleteMeIn, MePatchIn, SettingsIn
 from ..schemas.session import MeOut
 from ..services import account
@@ -14,7 +13,7 @@ router = APIRouter(prefix="/api")
 
 
 def me_out(user: deps.CurrentUser, request: Request) -> dict:
-    row = users.get(user.conn, user.id)
+    row = account.get_user(user.conn, user.id)
     stats = practice_service.profile_stats(user.conn, deps.clock_of(request), user.id)
     out = MeOut.from_row(row, stats).model_dump()
     out["settings"] = {"hide_timer": bool(row["hide_timer"])}
@@ -32,13 +31,13 @@ def patch_me(data: MePatchIn, request: Request,
              user: deps.CurrentUser = Depends(deps.registered_user("profile"))) -> dict:
     if data.avatar_key is not None and data.avatar_key not in health_config.AVATARS:
         raise AppError(422, "validation_error", fields={"avatar_key": "unknown avatar"})
-    users.update_profile(user.conn, user.id, data.avatar_key, data.cefr_level)
+    account.update_profile(user.conn, user.id, data.avatar_key, data.cefr_level)
     return me_out(user, request)
 
 
 @router.put("/me/settings")
 def put_settings(data: SettingsIn, user: deps.CurrentUser = Depends(deps.not_gated_user)) -> dict:
-    users.set_hide_timer(user.conn, user.id, data.hide_timer)
+    account.set_hide_timer(user.conn, user.id, data.hide_timer)
     return {"hide_timer": data.hide_timer}
 
 
