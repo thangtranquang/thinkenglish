@@ -30,3 +30,9 @@ def test_js_files_return_200(client):
 def test_no_inner_html_in_js():
     for p in JS_FILES:
         assert "innerHTML" not in p.read_text(encoding="utf-8"), p.name
+
+
+def test_static_assets_revalidate_but_audio_can_be_cached(client):
+    assert client.get("/js/main.js").headers["cache-control"] == "no-cache"
+    assert client.get("/").headers["cache-control"] == "no-cache"
+    assert "no-cache" not in client.get("/audio/cup-b88678d.mp3").headers.get("cache-control", "")

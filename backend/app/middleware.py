@@ -18,8 +18,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Referrer-Policy"] = "same-origin"
         if request.url.scheme == "https":
             response.headers["Strict-Transport-Security"] = "max-age=31536000"
-        if request.url.path.startswith("/api"):
+        path = request.url.path
+        if path.startswith("/api"):
             response.headers["Cache-Control"] = "no-store"
+        elif not path.startswith("/audio"):
+            # Pages, scripts and styles revalidate (ETag) on every load so updates show up immediately.
+            response.headers["Cache-Control"] = "no-cache"
         return response
 
 

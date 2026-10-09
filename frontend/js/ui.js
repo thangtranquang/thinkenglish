@@ -78,6 +78,35 @@ export function errorMessage(err) {
       return "Biệt danh hoặc mật khẩu chưa đúng.";
     case "validation_error":
       return "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.";
+    // Rules the server checks on registration (the client only pre-checks the simple ones).
+    case "nickname_invalid":
+      return "Biệt danh 3-20 ký tự, chỉ gồm chữ không dấu, số, dấu gạch dưới, chấm hoặc gạch ngang (không dùng dãy số giống số điện thoại).";
+    case "nickname_reserved":
+      return "Biệt danh này không được phép dùng. Hãy chọn biệt danh khác.";
+    case "password_length":
+      return "Mật khẩu cần từ 8 đến 128 ký tự.";
+    case "password_weak":
+      return "Mật khẩu quá dễ đoán (ví dụ 12345678, password, hoặc giống biệt danh). Hãy chọn mật khẩu khó hơn.";
+    case "too_young":
+      return "Ứng dụng dành cho bạn từ 10 tuổi trở lên.";
+    case "birth_year_invalid":
+      return "Năm sinh chưa hợp lệ.";
+    case "guardian_email":
+      return "Cần email phụ huynh hợp lệ.";
+    case "guardian_consent":
+      return "Cần phụ huynh xác nhận đồng ý.";
+    case "guardian_not_allowed":
+      return "Từ 16 tuổi trở lên không cần email phụ huynh.";
+    case "label_count":
+      return "Mỗi ảnh cần từ 1 đến 8 nhãn.";
+    case "label_duplicate":
+      return "Có hai nhãn trùng nhau. Hãy đổi tên hoặc xóa bớt.";
+    case "label_word":
+      return "Tên nhãn cần từ 1 đến 40 ký tự.";
+    case "label_position":
+      return "Vị trí nhãn chưa hợp lệ. Hãy kéo chấm vào trong ảnh.";
+    case "title_too_long":
+      return "Tiêu đề tối đa 60 ký tự.";
     default:
       return "Có lỗi xảy ra. Vui lòng thử lại.";
   }
