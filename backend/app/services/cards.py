@@ -9,8 +9,9 @@ from ..clock import Clock, iso
 from ..errors import AppError
 from ..repositories import cards as repo
 from ..repositories import content as content_repo
+from ..repositories import practice as practice_repo
 from ..schemas.cards import CardCreateIn
-from . import policy, validators
+from . import policy, stats, validators
 
 NOT_FOUND = (404, "not_found")
 SHARE_MESSAGES = {
@@ -29,8 +30,13 @@ def image_url(card_id: str) -> str:
 
 
 def mastery_for(conn: sqlite3.Connection, user_id: str, card_ids: list[str]) -> dict[str, int | None]:
-    """Hook for the practice slice (card mastery from attempts); None until then."""
-    return {cid: None for cid in card_ids}
+    """Mean of the last <= 5 attempt scores per card (0-100); None when the user has no attempts."""
+    scores = practice_repo.card_scores(conn, user_id, card_ids)
+    out: dict[str, int | None] = {}
+    for cid in card_ids:
+        mean = stats.mastery_mean(scores.get(cid, []))
+        out[cid] = None if mean is None else round(mean)
+    return out
 
 
 def merged_labels(base: list[dict], overrides_json: str | None) -> list[dict]:
@@ -84,6 +90,7 @@ def detail(conn: sqlite3.Connection, viewer_id: str, row: dict) -> dict:
         "visibility": row["visibility"], "owner_nickname": row["owner_nickname"],
         "is_mine": row["owner_id"] == viewer_id, "saved": bool(row["saved"]),
         "mastery": mastery_for(conn, viewer_id, [row["id"]])[row["id"]], "image_url": image_url(row["id"]),
+        "unlocked_levels": practice_repo.unlocked_levels(conn, viewer_id, row["id"]),
         "labels": [_label_detail(lab) for lab in merged_labels(labels, row["label_overrides"])],
         "sentences": [sentence_out(s) for s in content_repo.sentences_for(conn, row["content_id"])],
     }

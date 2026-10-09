@@ -75,6 +75,7 @@ class CardDetail(BaseModel):
     saved: bool
     mastery: int | None
     image_url: str
+    unlocked_levels: list[int] = [1]
     labels: list[LabelDetail]
     sentences: list[SentenceOut]
 

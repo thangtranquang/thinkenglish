@@ -117,13 +117,16 @@ def attempt_times(conn: sqlite3.Connection, user_id: str) -> list[str]:
     return [r[0] for r in conn.execute("SELECT DISTINCT created_at FROM attempts WHERE user_id = ?", (user_id,))]
 
 
-def card_scores(conn: sqlite3.Connection, user_id: str) -> dict[str, list[int]]:
-    """Per card: combined scores, oldest first."""
+def card_scores(conn: sqlite3.Connection, user_id: str,
+                card_ids: list[str] | None = None) -> dict[str, list[int]]:
+    """Per card: combined scores, oldest first (optionally only for the given cards)."""
+    wanted = None if card_ids is None else set(card_ids)
     out: dict[str, list[int]] = {}
     for card_id, score in conn.execute(
             "SELECT card_id, COALESCE(reflex_score, accuracy, 0) FROM attempts WHERE user_id = ? ORDER BY rowid",
             (user_id,)):
-        out.setdefault(card_id, []).append(score)
+        if wanted is None or card_id in wanted:
+            out.setdefault(card_id, []).append(score)
     return out
 
 
