@@ -2,7 +2,6 @@
 from dataclasses import replace
 
 from backend.app.maintenance import run_maintenance
-from backend.tests.conftest import make_settings
 from backend.tests.helpers.images import jpeg_bytes
 from backend.tests.helpers.practice import insert_content
 from backend.tests.helpers.uploads import make_card, ready_content
