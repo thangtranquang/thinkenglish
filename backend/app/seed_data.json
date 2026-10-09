@@ -1,0 +1,388 @@
+{
+ "version": 1,
+ "cards": [
+  {
+   "seed_key": "c1",
+   "title": "Cà phê vỉa hè",
+   "topic": "Cà phê",
+   "icon": "☕",
+   "labels": [
+    {
+     "word": "coffee cup",
+     "ipa": "/ˈkɒf.i kʌp/",
+     "vi_meaning": "tách cà phê",
+     "accepted_answers": [
+      "coffee cup",
+      "cup",
+      "mug",
+      "coffee"
+     ],
+     "x": 0.38,
+     "y": 0.64
+    },
+    {
+     "word": "motorcycle",
+     "ipa": "/ˈmoʊ.tərˌsaɪ.kəl/",
+     "vi_meaning": "xe máy",
+     "accepted_answers": [
+      "motorcycle",
+      "motorbike",
+      "bike",
+      "scooter"
+     ],
+     "x": 0.58,
+     "y": 0.38
+    },
+    {
+     "word": "pedestrian",
+     "ipa": "/pəˈdes.tri.ən/",
+     "vi_meaning": "người đi bộ",
+     "accepted_answers": [
+      "pedestrian",
+      "person",
+      "man",
+      "woman"
+     ],
+     "x": 0.78,
+     "y": 0.56
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "A man is sitting at a sidewalk cafe, drinking coffee.",
+     "vi": "Một người đàn ông ngồi ở quán cà phê vỉa hè, uống cà phê."
+    },
+    {
+     "en": "Motorcycles are parked on the street.",
+     "vi": "Nhiều xe máy đỗ trên đường."
+    }
+   ],
+   "story": {
+    "en": "This is a busy morning in Vietnam. People grab breakfast before work and enjoy hot coffee on the pavement.",
+    "vi": "Một buổi sáng bận rộn ở Việt Nam. Mọi người ăn sáng trước giờ làm và uống cà phê nóng ngoài vỉa hè."
+   }
+  },
+  {
+   "seed_key": "c2",
+   "title": "Góc làm việc tại nhà",
+   "topic": "Bàn làm việc",
+   "icon": "💻",
+   "labels": [
+    {
+     "word": "laptop",
+     "ipa": "/ˈlæp.tɒp/",
+     "vi_meaning": "máy tính xách tay",
+     "accepted_answers": [
+      "laptop",
+      "computer"
+     ],
+     "x": 0.4,
+     "y": 0.55
+    },
+    {
+     "word": "mouse",
+     "ipa": "/maʊs/",
+     "vi_meaning": "chuột máy tính",
+     "accepted_answers": [
+      "mouse"
+     ],
+     "x": 0.62,
+     "y": 0.68
+    },
+    {
+     "word": "monitor",
+     "ipa": "/ˈmɒn.ɪ.tər/",
+     "vi_meaning": "màn hình",
+     "accepted_answers": [
+      "monitor",
+      "screen"
+     ],
+     "x": 0.5,
+     "y": 0.3
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "A laptop is open on the desk.",
+     "vi": "Một máy tính xách tay đang mở trên bàn."
+    },
+    {
+     "en": "The mouse is next to the keyboard.",
+     "vi": "Con chuột nằm cạnh bàn phím."
+    }
+   ],
+   "story": {
+    "en": "This is my study corner. I do my homework here every evening.",
+    "vi": "Đây là góc học tập của tôi. Tối nào tôi cũng làm bài tập ở đây."
+   }
+  },
+  {
+   "seed_key": "c3",
+   "title": "Bữa cơm tối gia đình",
+   "topic": "Nhà bếp",
+   "icon": "🍳",
+   "labels": [
+    {
+     "word": "bowl",
+     "ipa": "/boʊl/",
+     "vi_meaning": "cái bát",
+     "accepted_answers": [
+      "bowl"
+     ],
+     "x": 0.35,
+     "y": 0.6
+    },
+    {
+     "word": "chopsticks",
+     "ipa": "/ˈtʃɒp.stɪks/",
+     "vi_meaning": "đôi đũa",
+     "accepted_answers": [
+      "chopsticks",
+      "chopstick"
+     ],
+     "x": 0.6,
+     "y": 0.45
+    },
+    {
+     "word": "plate",
+     "ipa": "/pleɪt/",
+     "vi_meaning": "cái đĩa",
+     "accepted_answers": [
+      "plate",
+      "dish"
+     ],
+     "x": 0.5,
+     "y": 0.75
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "There is a bowl of soup on the table.",
+     "vi": "Có một bát canh trên bàn."
+    },
+    {
+     "en": "We eat dinner together.",
+     "vi": "Chúng tôi ăn tối cùng nhau."
+    }
+   ],
+   "story": {
+    "en": "Dinner is the best time of the day. My family sits together and talks.",
+    "vi": "Bữa tối là lúc vui nhất trong ngày. Cả nhà ngồi bên nhau và trò chuyện."
+   }
+  },
+  {
+   "seed_key": "c4",
+   "title": "Bãi giữ xe máy",
+   "topic": "Đường phố",
+   "icon": "🛵",
+   "labels": [
+    {
+     "word": "helmet",
+     "ipa": "/ˈhel.mɪt/",
+     "vi_meaning": "mũ bảo hiểm",
+     "accepted_answers": [
+      "helmet"
+     ],
+     "x": 0.3,
+     "y": 0.5
+    },
+    {
+     "word": "key",
+     "ipa": "/kiː/",
+     "vi_meaning": "chìa khóa",
+     "accepted_answers": [
+      "key"
+     ],
+     "x": 0.65,
+     "y": 0.62
+    },
+    {
+     "word": "parking lot",
+     "ipa": "/ˈpɑː.kɪŋ lɒt/",
+     "vi_meaning": "bãi đỗ xe",
+     "accepted_answers": [
+      "parking lot",
+      "parking"
+     ],
+     "x": 0.5,
+     "y": 0.35
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "Many motorbikes are in the parking lot.",
+     "vi": "Nhiều xe máy đang ở trong bãi đỗ."
+    },
+    {
+     "en": "He puts on his helmet.",
+     "vi": "Cậu ấy đội mũ bảo hiểm."
+    }
+   ],
+   "story": {
+    "en": "After school, I take my bike from the parking lot. I always wear my helmet.",
+    "vi": "Tan học, tôi lấy xe ở bãi giữ xe. Tôi luôn đội mũ bảo hiểm."
+   }
+  },
+  {
+   "seed_key": "e1",
+   "title": "Ly cà phê buổi sáng",
+   "topic": "Cà phê",
+   "icon": "☕",
+   "labels": [
+    {
+     "word": "cup",
+     "ipa": "/kʌp/",
+     "vi_meaning": "cái tách",
+     "accepted_answers": [
+      "cup",
+      "mug"
+     ],
+     "x": 0.45,
+     "y": 0.55
+    },
+    {
+     "word": "saucer",
+     "ipa": "/ˈsɔː.sər/",
+     "vi_meaning": "cái đĩa lót",
+     "accepted_answers": [
+      "saucer",
+      "plate"
+     ],
+     "x": 0.5,
+     "y": 0.75
+    },
+    {
+     "word": "spoon",
+     "ipa": "/spuːn/",
+     "vi_meaning": "cái thìa",
+     "accepted_answers": [
+      "spoon"
+     ],
+     "x": 0.65,
+     "y": 0.7
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "A cup of coffee is on the table.",
+     "vi": "Một tách cà phê ở trên bàn."
+    },
+    {
+     "en": "The spoon is on the saucer.",
+     "vi": "Cái thìa nằm trên đĩa lót."
+    }
+   ],
+   "story": {
+    "en": "I drink coffee every morning. It helps me wake up.",
+    "vi": "Sáng nào tôi cũng uống cà phê. Nó giúp tôi tỉnh táo."
+   }
+  },
+  {
+   "seed_key": "e2",
+   "title": "Quán ăn đông khách",
+   "topic": "Nhà bếp",
+   "icon": "🍜",
+   "labels": [
+    {
+     "word": "table",
+     "ipa": "/ˈteɪ.bəl/",
+     "vi_meaning": "cái bàn",
+     "accepted_answers": [
+      "table"
+     ],
+     "x": 0.5,
+     "y": 0.7
+    },
+    {
+     "word": "chair",
+     "ipa": "/tʃer/",
+     "vi_meaning": "cái ghế",
+     "accepted_answers": [
+      "chair"
+     ],
+     "x": 0.25,
+     "y": 0.6
+    },
+    {
+     "word": "menu",
+     "ipa": "/ˈmen.juː/",
+     "vi_meaning": "thực đơn",
+     "accepted_answers": [
+      "menu"
+     ],
+     "x": 0.7,
+     "y": 0.5
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "People are eating at the tables.",
+     "vi": "Mọi người đang ăn ở các bàn."
+    },
+    {
+     "en": "A waiter is holding a menu.",
+     "vi": "Một nhân viên đang cầm thực đơn."
+    }
+   ],
+   "story": {
+    "en": "The restaurant is full tonight. Everyone looks happy.",
+    "vi": "Nhà hàng tối nay rất đông. Ai cũng vui vẻ."
+   }
+  },
+  {
+   "seed_key": "e3",
+   "title": "Bàn học gọn gàng",
+   "topic": "Bàn làm việc",
+   "icon": "📚",
+   "labels": [
+    {
+     "word": "notebook",
+     "ipa": "/ˈnoʊt.bʊk/",
+     "vi_meaning": "quyển vở",
+     "accepted_answers": [
+      "notebook",
+      "book"
+     ],
+     "x": 0.4,
+     "y": 0.6
+    },
+    {
+     "word": "pen",
+     "ipa": "/pen/",
+     "vi_meaning": "cái bút",
+     "accepted_answers": [
+      "pen",
+      "pencil"
+     ],
+     "x": 0.6,
+     "y": 0.65
+    },
+    {
+     "word": "lamp",
+     "ipa": "/læmp/",
+     "vi_meaning": "đèn bàn",
+     "accepted_answers": [
+      "lamp",
+      "light"
+     ],
+     "x": 0.75,
+     "y": 0.3
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "A notebook is open on the desk.",
+     "vi": "Một quyển vở mở trên bàn."
+    },
+    {
+     "en": "The lamp is turned on.",
+     "vi": "Đèn bàn đang bật."
+    }
+   ],
+   "story": {
+    "en": "I study at night. A good desk makes me focus.",
+    "vi": "Tôi học vào buổi tối. Bàn học gọn giúp tôi tập trung."
+   }
+  }
+ ]
+}
