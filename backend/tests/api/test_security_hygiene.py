@@ -70,7 +70,7 @@ def test_security_headers_on_every_response(client):  # TC-18.22
 
 def test_card_mastery_is_mean_of_last_five_scores(guest):
     detail = guest.get(f"/api/cards/{CARD}").json()
-    assert detail["mastery"] is None and detail["unlocked_levels"] == [1]
+    assert detail["mastery"] is None and detail["unlocked_levels"] == [1, 2, 3]
     listing = guest.get("/api/cards?scope=explore").json()["items"]
     assert all(c["mastery"] is None for c in listing)
     for transcript in ("wrong", "wrong", "coffee cup", "coffee cup", "coffee cup", "coffee cup", "coffee cup"):

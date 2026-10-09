@@ -79,10 +79,6 @@ def record_attempt(conn: sqlite3.Connection, clock: Clock, user_id: str,
                 raise AppError(404, "not_found")
         level = ITEM_LEVEL[data.item_type]
         practice = not is_reflex
-        if practice and level > 1:
-            prog = repo.get_progress(conn, user_id, data.card_id, level)
-            if not prog or not prog["unlocked"]:
-                raise AppError(409, "level_locked")
         timeout = is_reflex and not data.skipped and scoring.is_timeout(data.reflex_ms, limit)
         if data.skipped or timeout:
             acc, transcript = 0, (None if data.skipped else data.transcript)

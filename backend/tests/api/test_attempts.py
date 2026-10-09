@@ -7,7 +7,7 @@ def test_valid_attempt_end_to_end(guest, db):  # TC-28.1
     assert r.status_code == 201, r.text
     body = r.json()
     assert (body["accuracy"], body["score"], body["q"], body["xp"]) == (100, 100, 5, 10)
-    assert body["unlocked_levels"] == [1]
+    assert body["unlocked_levels"] == [1, 2, 3]
     row = db.execute("SELECT COUNT(*), SUM(xp) FROM attempts WHERE user_id = ?", (guest.user_id,)).fetchone()
     assert tuple(row) == (1, 10)
     rs = db.execute("SELECT reps, interval_days FROM review_state WHERE user_id = ?", (guest.user_id,)).fetchone()

@@ -45,4 +45,4 @@ def test_deleted_labels_do_not_block_the_level_two_unlock(reg):
     last = None
     for lab in kept:
         last = reg.post("/api/attempts", json=_attempt(card["id"], lab["id"], lab["word"])).json()
-    assert last["unlocked_levels"] == [1, 2]
+    assert last["unlocked_levels"] == [1, 2, 3]

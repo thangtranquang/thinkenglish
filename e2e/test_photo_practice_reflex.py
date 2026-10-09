@@ -1,4 +1,4 @@
-"""Add-photo -> Review -> save -> Practice, Practice level unlock, Reflex session and the self-check fallback."""
+"""Add-photo -> Review -> save -> Practice, Practice levels open, Reflex session and the self-check fallback."""
 import io
 import random
 
@@ -70,15 +70,15 @@ def test_addphoto_rejects_wrong_type_on_the_client(new_context):
     expect(page.get_by_test_id("addphoto-error")).to_contain_text("JPEG, PNG hoặc WebP")
 
 
-def test_practice_unlocks_level_two_after_three_correct_answers(new_context):
+def test_practice_levels_two_and_three_are_open_from_the_start(new_context):
     page = new_context().new_page()
     register_via_camera_gate(page, unique_nick("prac"))
     goto_hash(page, "#/home")
     card_id = first_card_id(page)
     words = page.evaluate("id => fetch('/api/cards/' + id).then(r => r.json()).then(c => c.labels.map(l => l.word))", card_id)
     goto_hash(page, "#/practice/" + card_id)
-    expect(page.get_by_test_id("practice-tab-2")).to_be_disabled()
-    expect(page.get_by_test_id("practice-tab-3")).to_be_disabled()
+    expect(page.get_by_test_id("practice-tab-2")).to_be_enabled()
+    expect(page.get_by_test_id("practice-tab-3")).to_be_enabled()
     for i, word in enumerate(words):
         page.get_by_test_id("practice-line").nth(i).click()
         hold_to_talk(page, word)

@@ -3,7 +3,7 @@ import { get, post } from "../api.js";
 import { speak, stopSpeaking } from "../audio.js";
 import { scene } from "../scene.js";
 import { recognize } from "../speech.js";
-import { el, errorMessage, hdr, screen, toast, uuid } from "../ui.js";
+import { el, errorMessage, hdr, screen, uuid } from "../ui.js";
 
 const LEVELS = [
   [1, "Gọi tên", "Level 1", "Gọi tên từng vật ngay khi nhìn thấy.", "label"],
@@ -30,8 +30,7 @@ export async function render(ctx) {
   }
 
   let level = 1;
-  let unlocked = card.unlocked_levels && card.unlocked_levels.length ? card.unlocked_levels : [1];
-  const target = { 1: 0, 2: 0, 3: 0 };
+    const target = { 1: 0, 2: 0, 3: 0 };
   const wrap = el("div", { class: "body", "data-testid": "screen-practice" });
   const fb = el("div", { class: "card", style: "background:linear-gradient(135deg,#ecfdf5,#eff6ff)" });
   const fbText = el("p", { class: "sub", role: "status", "aria-live": "polite", "data-testid": "practice-feedback" }, "Giữ nút bên dưới và nói theo câu đã chọn.");
@@ -52,25 +51,8 @@ export async function render(ctx) {
         transcript: transcript.slice(0, 500),
       });
       fbText.textContent = `Chính xác ${r.accuracy}% · Điểm ${r.score} · +${r.xp} XP. ${r.accuracy >= 80 ? "Tốt lắm!" : "Nghe mẫu rồi thử lại nhé."}`;
-      const before = unlocked.length;
-      unlocked = r.unlocked_levels && r.unlocked_levels.length ? r.unlocked_levels : unlocked;
-      if (unlocked.length > before) {
-        toast("Đã mở khóa Level " + Math.max(...unlocked) + "!");
-        draw();
-        fbText.textContent = `Chính xác ${r.accuracy}% · Điểm ${r.score} · +${r.xp} XP.`;
-      }
     } catch (e) {
-      if (e.status === 409 && e.error === "level_locked") {
-        toast("Level này chưa mở khóa. Đạt 70% ở cấp trước nhé.");
-        try {
-          card = await get("/api/cards/" + encodeURIComponent(card.id));
-          unlocked = card.unlocked_levels || [1];
-        } catch {
-          /* keep the old state */
-        }
-        level = 1;
-        draw();
-      } else if (e.status !== 403) {
+      if (e.status !== 403) {
         fbText.textContent = errorMessage(e);
       }
     } finally {
@@ -171,24 +153,21 @@ export async function render(ctx) {
       "div",
       { class: "seg", role: "tablist" },
       ...LEVELS.map(([k, name, sub]) => {
-        const open = unlocked.includes(k);
         return el(
           "button",
           {
             type: "button",
             class: k === level ? "on" : "",
-            disabled: !open,
             role: "tab",
             "aria-selected": k === level ? "true" : "false",
             "data-testid": "practice-tab-" + k,
-            title: open ? "" : "Đạt 70% ở cấp trước để mở khóa",
             onclick: () => {
               level = k;
               draw();
             },
           },
-          el("b", {}, (open ? "" : "🔒 ") + name),
-          el("small", {}, open ? sub : sub + " · khóa"),
+          el("b", {}, name),
+          el("small", {}, sub),
         );
       }),
     );

@@ -111,9 +111,8 @@ def upsert_progress(conn: sqlite3.Connection, user_id: str, card_id: str, level:
 
 
 def unlocked_levels(conn: sqlite3.Connection, user_id: str, card_id: str) -> list[int]:
-    rows = conn.execute("SELECT level FROM card_progress WHERE user_id = ? AND card_id = ? AND unlocked = 1",
-                        (user_id, card_id))
-    return sorted({1, *(r[0] for r in rows)})
+    """Practice levels 1-3 are always open (progress is still tracked per level)."""
+    return [1, 2, 3]
 
 
 # --- profile stats ---------------------------------------------------------------------------
