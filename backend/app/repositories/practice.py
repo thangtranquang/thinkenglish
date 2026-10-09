@@ -11,9 +11,18 @@ def _one(row: sqlite3.Row | None) -> dict | None:
 
 def card_for_view(conn: sqlite3.Connection, card_id: str) -> dict | None:
     return _one(conn.execute(
-        "SELECT c.id, c.owner_id, c.content_id, c.visibility, cc.moderation_status, "
+        "SELECT c.id, c.owner_id, c.content_id, c.visibility, c.label_overrides, cc.moderation_status, "
         "u.kind AS owner_kind FROM cards c JOIN card_contents cc ON cc.id = c.content_id "
         "JOIN users u ON u.id = c.owner_id WHERE c.id = ?", (card_id,)).fetchone())
+
+
+def card_overrides(conn: sqlite3.Connection, card_ids: list[str]) -> dict[str, str | None]:
+    """card_id -> label_overrides JSON (None when the card keeps the AI labels as they are)."""
+    out: dict[str, str | None] = {}
+    for card_id in set(card_ids):
+        row = conn.execute("SELECT label_overrides FROM cards WHERE id = ?", (card_id,)).fetchone()
+        out[card_id] = row[0] if row else None
+    return out
 
 
 def label_item(conn: sqlite3.Connection, content_id: str, item_id: str) -> dict | None:

@@ -10,6 +10,7 @@ import * as library from "./screens/library.js";
 import * as profile from "./screens/profile.js";
 import * as practice from "./screens/practice.js";
 import * as reflex from "./screens/reflex.js";
+import * as auto from "./screens/auto.js";
 import * as addphoto from "./screens/addphoto.js";
 import * as review from "./screens/review.js";
 
@@ -24,6 +25,7 @@ configure({
   login: { render: login.render, nav: null },
   practice: { render: practice.render, nav: null },
   reflex: { render: reflex.render, nav: null },
+  auto: { render: auto.render, nav: null },
   addphoto: { render: addphoto.render, nav: null },
   review: { render: review.render, nav: null },
 });

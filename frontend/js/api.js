@@ -106,7 +106,7 @@ export const del = (path, body) => api("DELETE", path, { body });
 
 // Adopt a MeOut response (register / login / patch).
 export function adoptMe(me) {
-  S.me = normalizeMe(me);
+  S.me = normalizeMe(me && me.user ? me.user : me); // register/login/patch answer with MeOut {user, ...}
   S.isGuest = false;
   S.gate = null;
 }

@@ -54,7 +54,7 @@ def create_guest(conn: sqlite3.Connection, clock: Clock) -> tuple[dict, str, str
 
 
 def touch_usage(conn: sqlite3.Connection, clock: Clock, settings: Settings, resolved: Resolved) -> tuple[dict, str]:
-    """Record activity (at most once per 60 s), start a usage session after idle, evaluate the gate.
+    """Record activity (at most once per 60 s, or per idle window if shorter), start a usage session after idle, evaluate the gate.
 
     Returns the fresh user row and the current usage session id.
     """
@@ -63,7 +63,7 @@ def touch_usage(conn: sqlite3.Connection, clock: Clock, settings: Settings, reso
     latest = usage.latest(conn, user["id"])
     if latest is not None:
         idle = (now - parse_iso(latest["last_activity_at"])).total_seconds()
-        if idle < TOUCH_SECONDS and not (resolved.session and _session_stale(resolved.session, now)):
+        if idle < min(TOUCH_SECONDS, settings.session_idle_seconds) and not (resolved.session and _session_stale(resolved.session, now)):
             return user, latest["id"]
     now_iso = iso(now)
     with transaction(conn):

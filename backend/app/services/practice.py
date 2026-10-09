@@ -27,11 +27,24 @@ def _out(row: dict, unlocked: list[int]) -> AttemptOut:
                       unlocked_levels=unlocked)
 
 
+def _override(overrides_json: str | None, label_id: str) -> dict | None | bool:
+    """The card's own edit of a label: dict (kept/renamed), False (deleted by the owner), None (no overrides)."""
+    if not overrides_json:
+        return None
+    for ov in json.loads(overrides_json):
+        if ov["id"] == label_id:
+            return ov
+    return False
+
+
 def _targets(conn: sqlite3.Connection, card: dict, data: AttemptIn) -> list[str]:
     if data.item_type == "label":
         item = repo.label_item(conn, card["content_id"], data.item_id)
-        if item is None:
+        ov = _override(card.get("label_overrides"), data.item_id)
+        if item is None or ov is False:
             raise AppError(404, "not_found")
+        if ov and ov["word"].strip().lower() != item["word"].lower():
+            return [ov["word"].strip()]  # renamed by the card owner: only the new word counts
         return [item["word"], *json.loads(item["accepted_answers"] or "[]")]
     kind = "description" if data.item_type == "sentence" else "story"
     sent = repo.sentence_item(conn, card["content_id"], data.item_id, kind)
@@ -98,6 +111,9 @@ def record_attempt(conn: sqlite3.Connection, clock: Clock, user_id: str,
                            new.reps, new.lapses, iso(srs.due_at(now, new.interval)), now_iso)
         if practice:
             ids = repo.level_item_ids(conn, card["content_id"], data.item_type)
+            if data.item_type == "label" and card.get("label_overrides"):
+                kept = {ov["id"] for ov in json.loads(card["label_overrides"])}
+                ids = [i for i in ids if i in kept]  # labels the owner deleted do not count
             latest = repo.practice_scores(conn, user_id, data.card_id, data.item_type)
             lscore = stats.level_score([latest.get(i) for i in ids])
             repo.upsert_progress(conn, user_id, data.card_id, level, round(lscore), 1 if level == 1 else 0, now_iso)
@@ -109,6 +125,20 @@ def record_attempt(conn: sqlite3.Connection, clock: Clock, user_id: str,
 
 # --- reflex ----------------------------------------------------------------------------------
 
+def _apply_overrides(conn: sqlite3.Connection, rounds: list[dict]) -> list[dict]:
+    """Show the card owner's edits: drop deleted labels, use renamed words (no stored IPA/audio for those)."""
+    overrides = repo.card_overrides(conn, [r["card_id"] for r in rounds])
+    out = []
+    for r in rounds:
+        ov = _override(overrides.get(r["card_id"]), r["item_id"])
+        if ov is False:
+            continue
+        if ov and ov["word"].strip().lower() != r["word"].lower():
+            r = dict(r, word=ov["word"].strip(), ipa=None, audio_file=None)
+        out.append(r)
+    return out
+
+
 def start_reflex(conn: sqlite3.Connection, clock: Clock, user: dict, level: int) -> dict:
     if level > user["reflex_level_unlocked"]:
         raise AppError(409, "level_locked")
@@ -119,6 +149,7 @@ def start_reflex(conn: sqlite3.Connection, clock: Clock, user: dict, level: int)
             seen = {r["item_id"] for r in rounds}
             extra = [r for r in repo.new_label_items(conn, user["id"], REFLEX_ROUNDS) if r["item_id"] not in seen]
             rounds += extra[:REFLEX_ROUNDS - len(rounds)]
+        rounds = _apply_overrides(conn, rounds)
         for r in rounds:
             r["item_type"] = "label"
         sid = str(uuid.uuid4())
