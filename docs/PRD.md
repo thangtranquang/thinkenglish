@@ -150,7 +150,7 @@ Out of scope: see section 1.11.
 - **FR-57** XP, streak, level (computed on read, no stored counters). XP per attempt (`attempts.xp`): 10 if score >= 70 else 2; listen-only (auto mode without microphone) earns none. Streak = number of consecutive `Asia/Ho_Chi_Minh` calendar days with >= 1 attempt, ending today or yesterday. Level = floor(XP / 500) + 1; level progress = (XP mod 500) / 500.
 - **FR-60** `GET /api/me` and `PUT /api/me/settings` are available to guests and registered users; `GET /api/me` returns streak/xp/level and settings and never the guardian email.
 - **FR-61** `reflex_progress` rows are created lazily; R1 is unlocked by default. Practice (card_progress) and Reflex unlocks are independent. A Reflex session counts toward unlock only with >= 5 answered rounds (skips count as answered); session score = mean `reflex_score`; `POST /api/reflex/sessions/{id}/complete` is idempotent.
-- **FR-62** Maintenance: guest purge (FR-6), empty-guest purge (`GUEST_EMPTY_RETENTION_DAYS`), stale `processing` sweep, orphan content/image GC (FR-29) and `rate_events` older than 1 day are removed by an idempotent maintenance job that runs at startup and then every 24 h as an asyncio task; it is also runnable as `python -m backend.app.maintenance`.
+- **FR-62** Maintenance: guest purge (FR-6), empty-guest purge (`GUEST_EMPTY_RETENTION_DAYS`), stale `processing` sweep, orphan content/image GC (FR-29) and `rate_events` older than 1 day are removed by an idempotent maintenance job that runs at startup and then every 24 h as an asyncio task; it is also runnable as `python -m backend.app.maintenance`. (Implemented: startup + CLI only, no 24 h loop; see 1.17.)
 - **FR-66** Foreign keys: every user-owned table has an FK to `users` ON DELETE CASCADE; `card_progress` and `card_saves` also FK to `cards` ON DELETE CASCADE (see 1.9). Seed content (`kind='system'` owner) is never removed by user deletion.
 
 ### 1.6 Non-functional requirements
@@ -258,7 +258,7 @@ Auth level: `public` = no identity needed; `identity` = guest or registered (coo
 | PATCH | `/api/me` | registered, csrf, gate | MePatchIn{avatar_key?, cefr_level?} -> MeOut |
 | PUT | `/api/me/settings` | identity, csrf, gate | SettingsIn -> SettingsOut (`hide_timer`) |
 | DELETE | `/api/me` | registered, csrf | DeleteMeIn{password} -> 204 |
-| GET | `/api/cards` | identity, gate | `?scope&topic&cefr&q&cursor&limit` -> CardPage (`scope=explore|mine|saved|due`) |
+| GET | `/api/cards` | identity, gate | `?scope&topic&cefr&q&offset&limit` -> CardPage{items, has_more} (`scope=explore|mine|saved|due`; offset paging, see 1.17) |
 | GET | `/api/cards/{id}` | identity, gate, visibility -> 404 | -> CardDetail (labels, sentences, story, `audio_url`, progress/unlock state) |
 | GET | `/api/cards/{id}/image` | identity, gate, visibility -> 404 | -> bytes |
 | POST/DELETE | `/api/cards/{id}/save` | identity, csrf, gate, visible | -> SaveOut |
@@ -268,9 +268,9 @@ Auth level: `public` = no identity needed; `identity` = guest or registered (coo
 | POST | `/api/uploads` | registered, csrf, gate | multipart -> 202 UploadOut{content_id, status, dedupe, ai_calls, card_id?} |
 | GET | `/api/uploads/{content_id}` | registered, upload claim required else 404 | -> UploadStatusOut |
 | POST | `/api/cards` | registered, csrf, gate, upload claim | CardCreateIn{content_id, title, label_overrides} -> 201 CardDetail |
-| POST | `/api/attempts` | identity, csrf, gate with grace | AttemptIn{client_attempt_id, card_id, item_type, item_id, mode, reflex_level?, reflex_session_id?, transcript?, pronunciation?, reflex_ms?, skipped} -> AttemptOut{accuracy, score, q, unlocks, xp} |
+| POST | `/api/attempts` | identity, csrf, gate (no grace window, see 1.17) | AttemptIn{client_attempt_id, card_id, item_type, item_id, mode, reflex_level?, reflex_session_id?, transcript?, pronunciation?, reflex_ms?, skipped} -> 201 AttemptOut{id, client_attempt_id, accuracy, score, q, xp, timeout, unlocked_levels} (replay -> 200) |
 | POST | `/api/reflex/sessions` | identity, csrf, gate | ReflexStartIn{level} -> ReflexSessionOut |
-| POST | `/api/reflex/sessions/{id}/complete` | owner, csrf, gate with grace, idempotent | -> ReflexSummaryOut |
+| POST | `/api/reflex/sessions/{id}/complete` | owner, csrf, gate (no grace), idempotent | -> ReflexCompleteOut{session_id, level, score, answered, completed_at, counted, reflex_level_unlocked} |
 
 Removed from the earlier draft: `GET /api/audio/{id}` (audio is static, FR-40). Settings are changed only via `PUT /api/me/settings` (FR-29). Static assets (`/`, `/js/*`, `/css/*`, `/audio/*`) are public and served by the backend.
 
@@ -419,3 +419,20 @@ The architect review `docs/architecture/guest_first_web_app_review.md` (verdict 
 - **New rules:** scoring (FR-55), SM-2 (FR-56), XP/streak/level (FR-57), pagination (FR-59), reflex progress (FR-61), maintenance (FR-62), migrations and seed (FR-63), client IP (FR-64), processing lease (FR-65), FK/cascade rules (FR-66), CSRF/Origin details (FR-30).
 - **Schema (1.9) and API (1.8)** are replaced by the review's tables. Slices needing security or architect pre-review are listed in the review file and must be honoured by the planner.
 - **OQ status:** OQ-1, OQ-2, OQ-5 resolved; OQ-3 (legal) and OQ-4 (AI budget) remain with the PO (see 1.12).
+
+### 1.17 Implementation status and deviations
+
+**Status:** built and committed on `feat/guest-first-web-app` (8 slices plus review fixes). All FR/AC items for guest bootstrap, gates, register/login/logout, uploads with AI-once dedupe, cards/save/share, Practice L1-L3, Reflex R1-R4, auto mode, profile/settings, account deletion and maintenance are implemented, except where listed below. Verification: backend 350 pytest tests and 10 Playwright e2e tests pass (`python -m pytest backend/tests -q`, `python -m pytest e2e -q`). Only about 90 core QA cases were implemented as tests; the rest of the QA catalogue is reference only.
+
+**Intentional lean deviations** (binding: `docs/architecture/guest_first_web_app_review.md` Addendum 3; `docs/plans/guest_first_web_app_plan.md` "Deferred / deviations"). Where these differ from FR/AC/schema text above, this list wins:
+- No second-visit gate grace window (`GATE_GRACE_SECONDS` does not exist; FR-13, AC-5, AC-32 grace parts not implemented). A gated guest gets 403 on all non-exempt calls.
+- Maintenance runs at startup and via CLI only (no 24 h task).
+- Tables `reflex_progress`, `user_settings`, `audio_assets` do not exist: `users.hide_timer`, `users.reflex_level_unlocked`, and `audio_file` on `card_labels`/`card_sentences` replace them. `sessions` has no `grace_until`/`rotated_from`; `card_contents` has no `lease_expires_at`/`manual_retries`/`phash` but has `processing_started_at`.
+- Reflex unlock simplified: a session with >= 5 answered rounds and mean score >= 80 unlocks the next level.
+- AI jobs: no lease; a `processing` row older than `PROCESSING_STALE_SECONDS` (120) is treated as failed on read; no manual-retry counter, only the hard cap of 6 calls per image (`409 analysis_unavailable`).
+- Offset/limit pagination (`limit` <= 50) instead of keyset cursors; `CardPage{items, has_more}`.
+- No `TRUSTED_PROXY_HOPS` (client IP = socket peer), no `/__test__/clock` (e2e uses `SESSION_IDLE_SECONDS=3`), no session rotate-on-use (sliding idle expiry only). Idle is configured in seconds (`SESSION_IDLE_SECONDS`, default 1800), not minutes.
+
+**Post-review changes:** guest creation (bootstrap) is rate-limited to 60 per hour per IP (`GUEST_CREATE_PER_IP_PER_HOUR`); `POST /api/uploads` bodies above `MAX_UPLOAD_BYTES` + 64 KiB are rejected with 413 `image_too_large` by a Content-Length middleware before multipart parsing (chunked bodies are still capped by the service); share also checks free text (title and label words containing phone numbers, emails, URLs or @handles) and returns `422 share_not_allowed` with reason `text` (other reasons: `faces`, `personal_info`, `unsuitable`); garbage collection of orphan content never removes image files still protected by a shared/referenced card or a recent claim; API client re-bootstraps on `csrf_failed`; config and security headers hardened (CSP, nosniff, Referrer-Policy, no-store on `/api`, HSTS over https).
+
+**Configuration:** the implemented env vars are listed in `.claude/CLAUDE.md` and `.env.example`; `.env` is not auto-loaded. `GEMINI_API_KEY` unset selects the deterministic mock provider. Run with `--workers 1`.

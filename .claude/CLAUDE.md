@@ -9,28 +9,59 @@ Source of truth: `docs/Product_Specification_ReflexEnglish_v1.1.docx` (readable 
 - **Passwords:** stdlib `hashlib.scrypt` with per-user salt. No other crypto deps.
 - **Frontend:** vanilla JS (ES modules) + plain CSS, served as static files by FastAPI. No build step, no framework.
 - **AI:** one provider interface (`AIProvider.analyze(image_bytes) -> AnalysisResult`). `GeminiProvider` is used only when `GEMINI_API_KEY` is set; `MockProvider` is deterministic and is what all tests use.
-- **Tests:** pytest + httpx `TestClient` for backend; Playwright (Python) for e2e. Run: `python -m pytest`.
-- **Run:** `python -m uvicorn backend.app.main:app --reload` (from repo root).
+- **Tests:** pytest + httpx `TestClient` for backend; Playwright (Python) for e2e.
+
+## Commands (repo root)
+- Install: `python -m pip install -r requirements.txt; python -m playwright install chromium`; copy audio once with `python tools/sync_audio.py` (docs/audio → frontend/audio).
+- Run: `python -m uvicorn backend.app.main:app --reload --workers 1` — **must be 1 worker** (AI semaphore and BackgroundTasks are per process).
+- Test: `python -m pytest backend/tests -q` (350 tests), `python -m pytest e2e -q` (10 tests, starts its own uvicorn on a free port).
+- Maintenance: `python -m backend.app.maintenance` (idempotent cleanup; also runs once at startup).
+
+## Environment variables (`Settings.from_env`, `backend/app/config.py`)
+`.env` is NOT auto-loaded: only real environment variables are read (`.env.example` is a template). All optional.
+| Variable | Default | Meaning |
+|---|---|---|
+| `APP_ORIGIN` | `http://localhost:8000` | Origin check + `Secure` cookies when not localhost |
+| `DATA_DIR` / `DB_PATH` | `data` / `<DATA_DIR>/reflex.db` | Images and SQLite file |
+| `GEMINI_API_KEY` | unset | Unset → deterministic `MockProvider`; set → `GeminiProvider` |
+| `SESSION_IDLE_SECONDS` | 1800 | Idle gap that starts a new usage session |
+| `GUEST_FREE_SESSIONS` | 1 | Write-sessions a guest gets before the mandatory gate |
+| `LOGIN_FAIL_PER_NICKNAME` / `LOGIN_FAIL_PER_IP` / `LOGIN_WINDOW_SECONDS` | 5 / 100 / 900 | Login failure limits |
+| `REGISTER_PER_IP` / `REGISTER_WINDOW_SECONDS` | 30 / 3600 | Registration limit |
+| `GUEST_CREATE_PER_IP_PER_HOUR` | 60 | Guest creation (bootstrap) limit per IP |
+| `MAX_UPLOAD_BYTES` / `MAX_PIXELS` | 5 MiB / 25 000 000 | Upload limits |
+| `PROCESSING_STALE_SECONDS` | 120 | Stuck AI job treated as failed on read |
+| `SCRYPT_N` | 16384 | scrypt cost (lowered in tests) |
+
+## Guest-first rules
+- Guests practise seeded cards with no signup. Signup is required only (a) when tapping the camera / upload / share (reason `camera`, Back allowed) or (b) on the second visit: once `GUEST_FREE_SESSIONS` write-sessions are done and the user returns after `SESSION_IDLE_SECONDS` of idle (reason `second_visit`, mandatory, no Back).
+- Registering converts the guest in place (same user id, progress kept). Registered sessions persist via cookie (90 d sliding / 365 d absolute).
+- Lean deviations from the architecture review (plan "Deferred / deviations", review Addendum 3): no gate grace window; maintenance at startup + CLI only; no `reflex_progress`/`user_settings`/`audio_assets` tables (columns on `users`/labels); simplified Reflex unlock; stale-on-read AI jobs with hard cap 6 calls; offset/limit paging; no `TRUSTED_PROXY_HOPS`; no `/__test__/clock`; no session rotate-on-use.
 
 ## Layout
 ```
 backend/app/
   main.py            app factory, static mount, router wiring
   config.py          settings from env (no secrets in code)
+  clock.py           SystemClock (only place that calls datetime.now)
   db.py              connection factory, schema migration runner
+  errors.py          AppError + error envelope
+  middleware.py      security headers, upload Content-Length cap
   security.py        scrypt, token hashing, csrf helpers
-  deps.py            FastAPI dependencies (current identity, csrf check)
-  routers/           HTTP only: parse/validate, call services, shape responses
-  services/          business rules (guest, auth, cards, practice, srs, upload)
-  repositories/      all SQL lives here, parameterized only
-  ai/                provider.py (interface), mock.py, gemini.py
-  seed.py            idempotent seed of system cards + audio_assets
+  deps.py            FastAPI dependencies (identity, usage touch, csrf, gate)
+  maintenance.py     run_maintenance + CLI
+  seed.py            idempotent seed of system cards
+  routers/           health_config, session, auth, me, cards, uploads, practice (HTTP only)
+  schemas/           pydantic models (common, auth, session, me, cards, uploads, practice)
+  services/          identity, auth, account, cards, upload, practice, maintenance, imaging, storage, scoring, srs, stats, validators, policy
+  repositories/      users, sessions, usage, cards, content, practice, maintenance, seed (all SQL)
+  ai/                provider.py (interface), schema.py, mock.py, gemini.py
 backend/migrations/  numbered .sql files (001_init.sql ...)
-backend/tests/       pytest
-frontend/            index.html, css/, js/ (api.js, state.js, screens/*.js), audio/ (mp3)
-e2e/                 Playwright tests
-tools/               gen_audio.py and other dev scripts
-docs/                spec, PRD.md, use-cases/, qa/
+backend/tests/       pytest (api/, unit/, helpers/)
+frontend/            index.html, css/, audio/ (mp3), js/ (main, api, state, router, ui, scene, rounds, cardlist, audio, speech) and js/screens/ (home, gate, register, login, explore, library, profile, practice, reflex, auto, addphoto, review)
+e2e/                 Playwright tests (conftest.py, flows.py, test_*.py)
+tools/               gen_audio.py (TTS), sync_audio.py (docs/audio → frontend/audio)
+docs/                spec, PRD.md, use-cases/, qa/, plans/, architecture/
 ```
 Dependency direction: `routers → services → repositories → db`. Routers never run SQL; repositories never import FastAPI; `ai/` is only called from `services/upload`.
 

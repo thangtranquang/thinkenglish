@@ -6,6 +6,18 @@
 > Updated 2026-10-09 (rev 2): aligned with the binding [architecture review](../architecture/guest_first_web_app_review.md) (OQ-1..OQ-63 resolved; the review wins over the PRD wherever they differ until the PRD is amended). Existing UC-1..UC-41 revised in place (IDs stable); new UC-42 through UC-49 appended (unshare, delete card, guest login entry, register `reason=profile`, `client_attempt_id` replay, `level_locked`, `analysis_unavailable`, keyset pagination). The open-questions list is replaced by "Resolved by architecture review" at the end. Marker "per architecture review OQ-n" = rule defined only in the review, not yet in the PRD.
 > Note: the file name `guest_first_web_app_use_cases.md` is final (OQ-1: the PRD 1.15 link is renamed to this file).
 
+## Implementation notes (lean build; PRD 1.17, plan "Deferred / deviations")
+
+The flows below are the full design; the shipped app differs as follows. Where they conflict, this list wins.
+- **No grace window (UC-5, UC-32-style flows):** a gated guest is blocked immediately on every non-exempt call; `GATE_GRACE_SECONDS` and the "pending attempt accepted for 600 s" rule do not exist.
+- **No session rotation:** registered sessions use sliding idle expiry only; no rotate-on-use or rotation overlap cases.
+- **Offset paging (UC-49):** lists use `offset`/`limit` (<= 50) and `has_more`, not keyset cursors.
+- **Reflex R4** asks the label word (not a free sentence); Reflex unlock is simplified (>= 5 answered rounds and mean >= 80 unlocks the next level).
+- **Practice tabs** (levels 1-3) show their lock state (unlock at 70%).
+- **Self-check fallback:** without `SpeechRecognition` Practice lets the learner self-assess instead of auto-scoring a transcript.
+- **Auto mode** without recognition (or microphone permission) runs listen-and-repeat only and posts no attempt.
+- **Other:** maintenance only at startup/CLI; AI jobs use stale-on-read (120 s) and a hard cap of 6 calls, no manual-retry counter; idle is `SESSION_IDLE_SECONDS`; sharing also rejects titles/words with contact info (`share_not_allowed`, reason `text`); guest creation is limited to 60/hour/IP.
+
 ## Conventions
 
 - IDs: `UC-n` primary flow; `UC-n-Am` alternative flow; `UC-n-Em` error flow; `UC-n-Xm` edge case. QA/E2E reference these IDs.
