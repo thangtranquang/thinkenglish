@@ -22,3 +22,6 @@ node_modules/
 # harness temp
 .claude/tmp/
 docs/.claude/
+
+# Office lock files
+~$*
