@@ -182,3 +182,16 @@ Cookies/device token/bootstrap; register + conversion (age, guardian, nickname n
 | 7 | Cursor/filter mismatch | 422 `invalid_cursor`. |
 | 8 | Effect of unsharing on others | Unshare deletes other users' `card_saves` for that card; their progress rows remain but the card is no longer visible to them. |
 | 9 | Remaining `[ASSUMED]` minor items | Accepted as written in the use-case file unless QA finds a conflict. |
+
+## Addendum 2 – rules pinned for tests (QA asked for a decision; binding)
+1. **SM-2 interval:** `interval = round(prev_interval × ease_after_update)`, where ease is updated for the current q first (classic SM-2). First two successful reviews are 1 then 6 days.
+2. **Rounding:** accuracy/score values use round-half-up to an integer (`floor(x + 0.5)`).
+3. **Reflex at exactly `reflex_ms == limit`:** NOT a timeout; scored normally (speed = 0). Timeout only when `reflex_ms > limit`.
+4. **Boundary inclusivity (one rule):** a threshold is "expired/due" when `now >= threshold` (rate-window events older than or equal to 900 s are outside the window; idle/absolute expiry, rotation age 30 d, lease, stale-guest 180 d likewise); `due_at <= now` counts as due. "Idle exactly 30:00 is the same session" is the single exception already decided (OQ-4): new session only when `now - last_activity_at > idle`.
+5. **Share rejection reason priority:** faces → personal info → unsuitable.
+6. **X-Forwarded-For with fewer entries than `TRUSTED_PROXY_HOPS`:** fall back to the socket peer.
+7. **Transcript cap:** 500 characters; longer → 422.
+8. **Auto mode with hidden tab:** pause the run when `document.hidden`, resume when visible again.
+9. **UC-38-E1 inconsistency:** attempts are idempotent by `client_attempt_id` (UC-46); a retry never creates a duplicate row.
+10. **Testability (binding on the implementation):** injected `Clock` (no `datetime.now()`/`time.time()` outside `clock.py`), injected `MockProvider` with `call_count` and inert-by-default hooks, every threshold overridable through settings, peer IP read from the ASGI scope, `init_db()` and `run_maintenance(conn, clock, settings)` callable without a server, `POST /__test__/clock` mounted only when `APP_ENV=test`, one SQLite connection per request/thread with all pragmas set on every connection.
+11. **Seed images:** `tools/fetch_seed_images.py` downloads the prototype's photos into `backend/seed_assets/` when run with network; the seed and tests must work offline using generated placeholder images when a file is missing.
