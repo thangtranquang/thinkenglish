@@ -17,8 +17,14 @@
       "mug",
       "coffee"
      ],
-     "x": 0.38,
-     "y": 0.64
+     "x": 0.289,
+     "y": 0.573,
+     "box": [
+      0.218,
+      0.496,
+      0.359,
+      0.65
+     ]
     },
     {
      "word": "motorcycle",
@@ -30,8 +36,14 @@
       "bike",
       "scooter"
      ],
-     "x": 0.58,
-     "y": 0.38
+     "x": 0.65,
+     "y": 0.702,
+     "box": [
+      0.479,
+      0.557,
+      0.822,
+      0.846
+     ]
     },
     {
      "word": "pedestrian",
@@ -43,24 +55,31 @@
       "man",
       "woman"
      ],
-     "x": 0.78,
-     "y": 0.56
+     "x": 0.917,
+     "y": 0.597,
+     "box": [
+      0.863,
+      0.336,
+      0.971,
+      0.858
+     ]
     }
    ],
    "descriptions": [
     {
-     "en": "A man is sitting at a sidewalk cafe, drinking coffee.",
-     "vi": "Một người đàn ông ngồi ở quán cà phê vỉa hè, uống cà phê."
+     "en": "A man walks past the sidewalk cafe.",
+     "vi": "Một người đàn ông đi bộ qua quán cà phê vỉa hè."
     },
     {
-     "en": "Motorcycles are parked on the street.",
-     "vi": "Nhiều xe máy đỗ trên đường."
+     "en": "A motorcycle is parked on the street.",
+     "vi": "Một chiếc xe máy đỗ trên đường."
     }
    ],
    "story": {
-    "en": "This is a busy morning in Vietnam. People grab breakfast before work and enjoy hot coffee on the pavement.",
-    "vi": "Một buổi sáng bận rộn ở Việt Nam. Mọi người ăn sáng trước giờ làm và uống cà phê nóng ngoài vỉa hè."
-   }
+    "en": "This is a busy morning in Vietnam. People enjoy hot coffee on the pavement.",
+    "vi": "Một buổi sáng bận rộn ở Việt Nam. Mọi người thưởng thức cà phê nóng ngoài vỉa hè."
+   },
+   "cefr_level": "A1"
   },
   {
    "seed_key": "c2",
@@ -76,8 +95,14 @@
       "laptop",
       "computer"
      ],
-     "x": 0.4,
-     "y": 0.55
+     "x": 0.188,
+     "y": 0.508,
+     "box": [
+      0.027,
+      0.369,
+      0.348,
+      0.647
+     ]
     },
     {
      "word": "mouse",
@@ -86,8 +111,14 @@
      "accepted_answers": [
       "mouse"
      ],
-     "x": 0.62,
-     "y": 0.68
+     "x": 0.76,
+     "y": 0.789,
+     "box": [
+      0.725,
+      0.728,
+      0.796,
+      0.85
+     ]
     },
     {
      "word": "monitor",
@@ -98,7 +129,13 @@
       "screen"
      ],
      "x": 0.5,
-     "y": 0.3
+     "y": 0.384,
+     "box": [
+      0.34,
+      0.134,
+      0.66,
+      0.634
+     ]
     }
    ],
    "descriptions": [
@@ -114,7 +151,8 @@
    "story": {
     "en": "This is my study corner. I do my homework here every evening.",
     "vi": "Đây là góc học tập của tôi. Tối nào tôi cũng làm bài tập ở đây."
-   }
+   },
+   "cefr_level": "A1"
   },
   {
    "seed_key": "c3",
@@ -129,8 +167,14 @@
      "accepted_answers": [
       "bowl"
      ],
-     "x": 0.35,
-     "y": 0.6
+     "x": 0.214,
+     "y": 0.688,
+     "box": [
+      0.105,
+      0.544,
+      0.322,
+      0.831
+     ]
     },
     {
      "word": "chopsticks",
@@ -140,8 +184,14 @@
       "chopsticks",
       "chopstick"
      ],
-     "x": 0.6,
-     "y": 0.45
+     "x": 0.828,
+     "y": 0.816,
+     "box": [
+      0.72,
+      0.697,
+      0.936,
+      0.936
+     ]
     },
     {
      "word": "plate",
@@ -151,14 +201,20 @@
       "plate",
       "dish"
      ],
-     "x": 0.5,
-     "y": 0.75
+     "x": 0.521,
+     "y": 0.773,
+     "box": [
+      0.34,
+      0.681,
+      0.702,
+      0.866
+     ]
     }
    ],
    "descriptions": [
     {
-     "en": "There is a bowl of soup on the table.",
-     "vi": "Có một bát canh trên bàn."
+     "en": "There is a bowl of rice on the table.",
+     "vi": "Có một bát cơm trên bàn."
     },
     {
      "en": "We eat dinner together.",
@@ -168,7 +224,8 @@
    "story": {
     "en": "Dinner is the best time of the day. My family sits together and talks.",
     "vi": "Bữa tối là lúc vui nhất trong ngày. Cả nhà ngồi bên nhau và trò chuyện."
-   }
+   },
+   "cefr_level": "A1"
   },
   {
    "seed_key": "c4",
@@ -183,8 +240,14 @@
      "accepted_answers": [
       "helmet"
      ],
-     "x": 0.3,
-     "y": 0.5
+     "x": 0.26,
+     "y": 0.727,
+     "box": [
+      0.196,
+      0.645,
+      0.325,
+      0.808
+     ]
     },
     {
      "word": "key",
@@ -193,8 +256,14 @@
      "accepted_answers": [
       "key"
      ],
-     "x": 0.65,
-     "y": 0.62
+     "x": 0.792,
+     "y": 0.848,
+     "box": [
+      0.693,
+      0.793,
+      0.89,
+      0.902
+     ]
     },
     {
      "word": "parking lot",
@@ -204,24 +273,31 @@
       "parking lot",
       "parking"
      ],
-     "x": 0.5,
-     "y": 0.35
+     "x": 0.166,
+     "y": 0.167,
+     "box": [
+      0.092,
+      0.056,
+      0.24,
+      0.278
+     ]
     }
    ],
    "descriptions": [
     {
-     "en": "Many motorbikes are in the parking lot.",
-     "vi": "Nhiều xe máy đang ở trong bãi đỗ."
+     "en": "A motorbike is in the parking lot.",
+     "vi": "Một chiếc xe máy ở trong bãi đỗ xe."
     },
     {
-     "en": "He puts on his helmet.",
-     "vi": "Cậu ấy đội mũ bảo hiểm."
+     "en": "The helmet is next to the motorbike.",
+     "vi": "Mũ bảo hiểm ở cạnh chiếc xe máy."
     }
    ],
    "story": {
     "en": "After school, I take my bike from the parking lot. I always wear my helmet.",
     "vi": "Tan học, tôi lấy xe ở bãi giữ xe. Tôi luôn đội mũ bảo hiểm."
-   }
+   },
+   "cefr_level": "A1"
   },
   {
    "seed_key": "e1",
@@ -237,8 +313,14 @@
       "cup",
       "mug"
      ],
-     "x": 0.45,
-     "y": 0.55
+     "x": 0.423,
+     "y": 0.595,
+     "box": [
+      0.259,
+      0.403,
+      0.588,
+      0.787
+     ]
     },
     {
      "word": "saucer",
@@ -248,8 +330,14 @@
       "saucer",
       "plate"
      ],
-     "x": 0.5,
-     "y": 0.75
+     "x": 0.469,
+     "y": 0.805,
+     "box": [
+      0.142,
+      0.697,
+      0.796,
+      0.912
+     ]
     },
     {
      "word": "spoon",
@@ -258,8 +346,14 @@
      "accepted_answers": [
       "spoon"
      ],
-     "x": 0.65,
-     "y": 0.7
+     "x": 0.659,
+     "y": 0.759,
+     "box": [
+      0.567,
+      0.7,
+      0.752,
+      0.819
+     ]
     }
    ],
    "descriptions": [
@@ -275,7 +369,8 @@
    "story": {
     "en": "I drink coffee every morning. It helps me wake up.",
     "vi": "Sáng nào tôi cũng uống cà phê. Nó giúp tôi tỉnh táo."
-   }
+   },
+   "cefr_level": "A1"
   },
   {
    "seed_key": "e2",
@@ -290,8 +385,14 @@
      "accepted_answers": [
       "table"
      ],
-     "x": 0.5,
-     "y": 0.7
+     "x": 0.604,
+     "y": 0.773,
+     "box": [
+      0.298,
+      0.634,
+      0.91,
+      0.912
+     ]
     },
     {
      "word": "chair",
@@ -300,8 +401,14 @@
      "accepted_answers": [
       "chair"
      ],
-     "x": 0.25,
-     "y": 0.6
+     "x": 0.151,
+     "y": 0.691,
+     "box": [
+      0.058,
+      0.447,
+      0.244,
+      0.936
+     ]
     },
     {
      "word": "menu",
@@ -310,24 +417,31 @@
      "accepted_answers": [
       "menu"
      ],
-     "x": 0.7,
-     "y": 0.5
+     "x": 0.656,
+     "y": 0.543,
+     "box": [
+      0.579,
+      0.439,
+      0.733,
+      0.647
+     ]
     }
    ],
    "descriptions": [
     {
-     "en": "People are eating at the tables.",
-     "vi": "Mọi người đang ăn ở các bàn."
+     "en": "There is a menu on the table.",
+     "vi": "Có một thực đơn trên bàn."
     },
     {
-     "en": "A waiter is holding a menu.",
-     "vi": "Một nhân viên đang cầm thực đơn."
+     "en": "A chair is next to the table.",
+     "vi": "Một cái ghế ở cạnh cái bàn."
     }
    ],
    "story": {
-    "en": "The restaurant is full tonight. Everyone looks happy.",
-    "vi": "Nhà hàng tối nay rất đông. Ai cũng vui vẻ."
-   }
+    "en": "We have dinner at a small restaurant. The menu has many dishes.",
+    "vi": "Chúng tôi ăn tối ở một nhà hàng nhỏ. Thực đơn có nhiều món."
+   },
+   "cefr_level": "A1"
   },
   {
    "seed_key": "e3",
@@ -343,8 +457,14 @@
       "notebook",
       "book"
      ],
-     "x": 0.4,
-     "y": 0.6
+     "x": 0.404,
+     "y": 0.766,
+     "box": [
+      0.131,
+      0.65,
+      0.676,
+      0.881
+     ]
     },
     {
      "word": "pen",
@@ -354,8 +474,14 @@
       "pen",
       "pencil"
      ],
-     "x": 0.6,
-     "y": 0.65
+     "x": 0.799,
+     "y": 0.844,
+     "box": [
+      0.678,
+      0.767,
+      0.921,
+      0.92
+     ]
     },
     {
      "word": "lamp",
@@ -365,8 +491,14 @@
       "lamp",
       "light"
      ],
-     "x": 0.75,
-     "y": 0.3
+     "x": 0.823,
+     "y": 0.523,
+     "box": [
+      0.74,
+      0.328,
+      0.906,
+      0.718
+     ]
     }
    ],
    "descriptions": [
@@ -382,6 +514,427 @@
    "story": {
     "en": "I study at night. A good desk makes me focus.",
     "vi": "Tôi học vào buổi tối. Bàn học gọn giúp tôi tập trung."
+   },
+   "cefr_level": "A1"
+  },
+  {
+   "seed_key": "s1",
+   "title": "Lớp học của em",
+   "topic": "Lớp học",
+   "icon": "🏫",
+   "cefr_level": "A1",
+   "labels": [
+    {
+     "word": "blackboard",
+     "ipa": "/ˈblæk.bɔːd/",
+     "vi_meaning": "bảng đen",
+     "accepted_answers": [
+      "blackboard",
+      "board",
+      "chalkboard",
+      "whiteboard"
+     ],
+     "x": 0.5,
+     "y": 0.273,
+     "box": [
+      0.152,
+      0.072,
+      0.848,
+      0.475
+     ]
+    },
+    {
+     "word": "desk",
+     "ipa": "/desk/",
+     "vi_meaning": "bàn học",
+     "accepted_answers": [
+      "desk",
+      "table"
+     ],
+     "x": 0.469,
+     "y": 0.805,
+     "box": [
+      0.235,
+      0.666,
+      0.702,
+      0.944
+     ]
+    },
+    {
+     "word": "book",
+     "ipa": "/bʊk/",
+     "vi_meaning": "quyển sách",
+     "accepted_answers": [
+      "book",
+      "textbook"
+     ],
+     "x": 0.44,
+     "y": 0.628,
+     "box": [
+      0.355,
+      0.575,
+      0.525,
+      0.681
+     ]
+    },
+    {
+     "word": "backpack",
+     "ipa": "/ˈbæk.pæk/",
+     "vi_meaning": "ba lô",
+     "accepted_answers": [
+      "backpack",
+      "bag",
+      "schoolbag",
+      "school bag"
+     ],
+     "x": 0.854,
+     "y": 0.748,
+     "box": [
+      0.767,
+      0.575,
+      0.942,
+      0.92
+     ]
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "The blackboard is on the wall.",
+     "vi": "Cái bảng đen ở trên tường."
+    },
+    {
+     "en": "A book is on the desk.",
+     "vi": "Một quyển sách ở trên bàn."
+    }
+   ],
+   "story": {
+    "en": "This is my classroom. I study English here every day.",
+    "vi": "Đây là lớp học của tôi. Ngày nào tôi cũng học tiếng Anh ở đây."
+   }
+  },
+  {
+   "seed_key": "s2",
+   "title": "Đĩa trái cây",
+   "topic": "Trái cây",
+   "icon": "🍎",
+   "cefr_level": "A1",
+   "labels": [
+    {
+     "word": "apple",
+     "ipa": "/ˈæp.əl/",
+     "vi_meaning": "quả táo",
+     "accepted_answers": [
+      "apple"
+     ],
+     "x": 0.26,
+     "y": 0.598,
+     "box": [
+      0.157,
+      0.392,
+      0.364,
+      0.803
+     ]
+    },
+    {
+     "word": "banana",
+     "ipa": "/bəˈnɑː.nə/",
+     "vi_meaning": "quả chuối",
+     "accepted_answers": [
+      "banana"
+     ],
+     "x": 0.552,
+     "y": 0.762,
+     "box": [
+      0.397,
+      0.588,
+      0.746,
+      0.797
+     ]
+    },
+    {
+     "word": "orange",
+     "ipa": "/ˈɒr.ɪndʒ/",
+     "vi_meaning": "quả cam",
+     "accepted_answers": [
+      "orange"
+     ],
+     "x": 0.797,
+     "y": 0.705,
+     "box": [
+      0.704,
+      0.553,
+      0.89,
+      0.858
+     ]
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "The apple is red.",
+     "vi": "Quả táo màu đỏ."
+    },
+    {
+     "en": "The banana is yellow.",
+     "vi": "Quả chuối màu vàng."
+    }
+   ],
+   "story": {
+    "en": "I like fruit. Every day I eat an apple and a banana.",
+    "vi": "Tôi thích trái cây. Ngày nào tôi cũng ăn một quả táo và một quả chuối."
+   }
+  },
+  {
+   "seed_key": "s3",
+   "title": "Phòng ngủ của em",
+   "topic": "Phòng ngủ",
+   "icon": "🛏️",
+   "cefr_level": "A1",
+   "labels": [
+    {
+     "word": "bed",
+     "ipa": "/bed/",
+     "vi_meaning": "cái giường",
+     "accepted_answers": [
+      "bed"
+     ],
+     "x": 0.333,
+     "y": 0.633,
+     "box": [
+      0.058,
+      0.384,
+      0.608,
+      0.881
+     ]
+    },
+    {
+     "word": "pillow",
+     "ipa": "/ˈpɪl.oʊ/",
+     "vi_meaning": "cái gối",
+     "accepted_answers": [
+      "pillow",
+      "cushion"
+     ],
+     "x": 0.208,
+     "y": 0.578,
+     "box": [
+      0.11,
+      0.512,
+      0.306,
+      0.644
+     ]
+    },
+    {
+     "word": "clock",
+     "ipa": "/klɒk/",
+     "vi_meaning": "đồng hồ",
+     "accepted_answers": [
+      "clock",
+      "alarm clock",
+      "watch"
+     ],
+     "x": 0.74,
+     "y": 0.677,
+     "box": [
+      0.678,
+      0.595,
+      0.801,
+      0.759
+     ]
+    },
+    {
+     "word": "lamp",
+     "ipa": "/læmp/",
+     "vi_meaning": "đèn ngủ",
+     "accepted_answers": [
+      "lamp",
+      "light"
+     ],
+     "x": 0.865,
+     "y": 0.581,
+     "box": [
+      0.793,
+      0.414,
+      0.936,
+      0.748
+     ]
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "The pillow is on the bed.",
+     "vi": "Cái gối ở trên giường."
+    },
+    {
+     "en": "The clock is next to the lamp.",
+     "vi": "Cái đồng hồ ở cạnh cái đèn."
+    }
+   ],
+   "story": {
+    "en": "This is my bedroom. I go to bed at ten o'clock.",
+    "vi": "Đây là phòng ngủ của tôi. Tôi đi ngủ lúc mười giờ."
+   }
+  },
+  {
+   "seed_key": "s4",
+   "title": "Công viên buổi sáng",
+   "topic": "Công viên",
+   "icon": "🌳",
+   "cefr_level": "A1",
+   "labels": [
+    {
+     "word": "tree",
+     "ipa": "/triː/",
+     "vi_meaning": "cái cây",
+     "accepted_answers": [
+      "tree"
+     ],
+     "x": 0.193,
+     "y": 0.453,
+     "box": [
+      0.017,
+      0.087,
+      0.369,
+      0.819
+     ]
+    },
+    {
+     "word": "bench",
+     "ipa": "/bentʃ/",
+     "vi_meaning": "ghế dài công viên",
+     "accepted_answers": [
+      "bench",
+      "seat"
+     ],
+     "x": 0.667,
+     "y": 0.738,
+     "box": [
+      0.465,
+      0.588,
+      0.869,
+      0.889
+     ]
+    },
+    {
+     "word": "bird",
+     "ipa": "/bɜːd/",
+     "vi_meaning": "con chim",
+     "accepted_answers": [
+      "bird"
+     ],
+     "x": 0.704,
+     "y": 0.481,
+     "box": [
+      0.6,
+      0.353,
+      0.808,
+      0.609
+     ]
+    },
+    {
+     "word": "sun",
+     "ipa": "/sʌn/",
+     "vi_meaning": "mặt trời",
+     "accepted_answers": [
+      "sun"
+     ],
+     "x": 0.865,
+     "y": 0.172,
+     "box": [
+      0.765,
+      0.022,
+      0.965,
+      0.322
+     ]
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "A bird is sitting on the bench.",
+     "vi": "Một chú chim đang đậu trên ghế dài."
+    },
+    {
+     "en": "The sun is bright today.",
+     "vi": "Hôm nay mặt trời rất sáng."
+    }
+   ],
+   "story": {
+    "en": "I go to the park on Sunday. I sit under the tree.",
+    "vi": "Tôi đi công viên vào Chủ nhật. Tôi ngồi dưới gốc cây."
+   }
+  },
+  {
+   "seed_key": "s5",
+   "title": "Ngã tư đông xe",
+   "topic": "Đường phố",
+   "icon": "🚦",
+   "cefr_level": "A2",
+   "labels": [
+    {
+     "word": "traffic light",
+     "ipa": "/ˈtræf.ɪk laɪt/",
+     "vi_meaning": "đèn giao thông",
+     "accepted_answers": [
+      "traffic light",
+      "traffic lights",
+      "light",
+      "stoplight"
+     ],
+     "x": 0.104,
+     "y": 0.246,
+     "box": [
+      0.048,
+      0.103,
+      0.16,
+      0.389
+     ]
+    },
+    {
+     "word": "car",
+     "ipa": "/kɑːr/",
+     "vi_meaning": "xe ô tô",
+     "accepted_answers": [
+      "car",
+      "automobile"
+     ],
+     "x": 0.396,
+     "y": 0.762,
+     "box": [
+      0.204,
+      0.606,
+      0.588,
+      0.919
+     ]
+    },
+    {
+     "word": "bus",
+     "ipa": "/bʌs/",
+     "vi_meaning": "xe buýt",
+     "accepted_answers": [
+      "bus"
+     ],
+     "x": 0.792,
+     "y": 0.552,
+     "box": [
+      0.6,
+      0.353,
+      0.983,
+      0.752
+     ]
+    }
+   ],
+   "descriptions": [
+    {
+     "en": "The traffic light is red.",
+     "vi": "Đèn giao thông màu đỏ."
+    },
+    {
+     "en": "A bus and a car are on the road.",
+     "vi": "Một xe buýt và một ô tô ở trên đường."
+    }
+   ],
+   "story": {
+    "en": "Cars must stop at the red light. I wait and then cross the road.",
+    "vi": "Ô tô phải dừng ở đèn đỏ. Tôi chờ rồi mới băng qua đường."
    }
   }
  ]

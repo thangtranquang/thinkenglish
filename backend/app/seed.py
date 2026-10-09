@@ -54,8 +54,9 @@ def _ensure_image(settings: Settings, seed_key: str, title: str) -> tuple[bytes,
     target = settings.data_dir / rel
     target.parent.mkdir(parents=True, exist_ok=True)
     source = SEED_ASSETS / f"{seed_key}.jpg"
-    if source.exists():
-        shutil.copyfile(source, target)
+    if source.exists():  # refresh: an already seeded database gets the newer illustration
+        if not target.exists() or target.read_bytes() != source.read_bytes():
+            shutil.copyfile(source, target)
     elif not target.exists():
         target.write_bytes(_placeholder_jpeg(seed_key, title))
     return target.read_bytes(), rel
@@ -73,11 +74,12 @@ def seed_all(conn: sqlite3.Connection, settings: Settings, clock: Clock) -> None
                 width, height = im.size
             image_id, content_id = seed_id(key, "image"), seed_id(key, "content")
             repo.upsert_image(conn, image_id, hashlib.sha256(raw).hexdigest(), rel, width, height, now)
-            repo.upsert_content(conn, content_id, image_id, key, card["topic"], now)
+            cefr = card.get("cefr_level", "A1")
+            repo.upsert_content(conn, content_id, image_id, key, card["topic"], cefr, now)
             for i, lab in enumerate(card["labels"]):
                 repo.upsert_label(conn, seed_id(key, "label", i), content_id, i, lab["word"], lab["ipa"],
                                   lab["vi_meaning"], lab["accepted_answers"], lab["x"], lab["y"],
-                                  audio_name(lab["word"]))
+                                  tuple(lab["box"]) if lab.get("box") else None, cefr, audio_name(lab["word"]))
             sentences = [("description", i, s) for i, s in enumerate(card["descriptions"])]
             sentences.append(("story", 0, card["story"]))
             for kind, pos, s in sentences:

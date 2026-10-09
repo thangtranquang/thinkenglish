@@ -1,7 +1,7 @@
 """Tạo sẵn file âm thanh (mp3) cho prototype bằng giọng nam trẻ neural của Microsoft
 (en-US-BrianNeural, nâng cao độ +20Hz cho giống giọng bé trai; Microsoft không có giọng bé trai thật).
 
-Đọc mọi từ/câu tiếng Anh trong docs/reflex_app.html (L('...') và D('...')),
+Đọc mọi từ/câu tiếng Anh trong docs/reflex_app.html (L('...') và D('...')) và backend/app/seed_data.json,
 sinh docs/audio/<slug>-<hash>.mp3 nếu chưa có. Tên file phải khớp hàm audioName() trong HTML.
 
 Chạy:  pip install edge-tts
@@ -11,12 +11,13 @@ Ghi chú: edge-tts dùng dịch vụ đọc của Microsoft Edge (không chính 
 dựng prototype. Bản thật dùng Azure AI Speech với cùng tên giọng (JennyNeural...),
 sinh một lần lúc xử lý ảnh và lưu vào bảng audio_assets.
 """
-import argparse, asyncio, re, sys
+import argparse, asyncio, json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 HTML = ROOT / "docs" / "reflex_app.html"
 OUT = ROOT / "docs" / "audio"
+SEED = ROOT / "backend" / "app" / "seed_data.json"
 
 
 def djb2(s: str) -> str:
@@ -31,9 +32,20 @@ def audio_name(text: str) -> str:
     return f"{slug}-{djb2(text)}.mp3"
 
 
+def seed_texts() -> list[str]:
+    """Label words and description/story sentences of the seed cards (what seed.py points audio_file at)."""
+    data = json.loads(SEED.read_text(encoding="utf-8"))
+    out: list[str] = []
+    for card in data["cards"]:
+        out += [lab["word"] for lab in card["labels"]]
+        out += [s["en"] for s in card["descriptions"]] + [card["story"]["en"]]
+    return out
+
+
 def collect_texts() -> list[str]:
     src = HTML.read_text(encoding="utf-8")
     found = re.findall(r"\bL\('([^']+)'", src) + re.findall(r"\bD\('([^']+)'", src)
+    found += seed_texts()
     seen, out = set(), []
     for t in found:
         if t not in seen:

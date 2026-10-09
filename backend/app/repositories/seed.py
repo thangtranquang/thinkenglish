@@ -25,35 +25,38 @@ def upsert_image(conn: sqlite3.Connection, image_id: str, sha256: str, storage_p
 
 
 def upsert_content(conn: sqlite3.Connection, content_id: str, image_id: str, seed_key: str,
-                   topic: str, now: str) -> None:
+                   topic: str, cefr: str, now: str) -> None:
     conn.execute(
         "INSERT INTO card_contents (id, image_asset_id, seed_key, status, model, prompt_version, "
         "ai_calls, topic, topic_tags, cefr_level, safety, moderation_status, created_at) "
-        "VALUES (?, ?, ?, 'ready', 'seed', 'seed', 0, ?, ?, 'A1', ?, 'approved', ?) "
+        "VALUES (?, ?, ?, 'ready', 'seed', 'seed', 0, ?, ?, ?, ?, 'approved', ?) "
         "ON CONFLICT(id) DO UPDATE SET image_asset_id = excluded.image_asset_id, "
         "seed_key = excluded.seed_key, topic = excluded.topic, topic_tags = excluded.topic_tags, "
+        "cefr_level = excluded.cefr_level, "
         "status = 'ready', moderation_status = 'approved'",
-        (content_id, image_id, seed_key, topic, json.dumps([topic], ensure_ascii=False),
+        (content_id, image_id, seed_key, topic, json.dumps([topic], ensure_ascii=False), cefr,
          json.dumps({"faces": False, "personal_info": False, "unsuitable": False}), now),
     )
 
 
 def upsert_label(conn: sqlite3.Connection, label_id: str, content_id: str, position: int,
                  word: str, ipa: str, vi_meaning: str, accepted: list[str],
-                 x: float, y: float, audio_file: str) -> None:
-    half = 0.1
-    box = (max(0.0, x - half), max(0.0, y - half), min(1.0, x + half), min(1.0, y + half))
+                 x: float, y: float, box: tuple[float, float, float, float] | None, cefr: str,
+                 audio_file: str) -> None:
+    if box is None:
+        half = 0.1
+        box = (max(0.0, x - half), max(0.0, y - half), min(1.0, x + half), min(1.0, y + half))
     conn.execute(
         "INSERT INTO card_labels (id, content_id, position, word, ipa, vi_meaning, accepted_answers, "
         "cefr_level, confidence, x, y, box_x1, box_y1, box_x2, box_y2, audio_file) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, 'A1', 1.0, ?, ?, ?, ?, ?, ?, ?) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1.0, ?, ?, ?, ?, ?, ?, ?) "
         "ON CONFLICT(id) DO UPDATE SET position = excluded.position, word = excluded.word, "
         "ipa = excluded.ipa, vi_meaning = excluded.vi_meaning, "
-        "accepted_answers = excluded.accepted_answers, x = excluded.x, y = excluded.y, "
+        "accepted_answers = excluded.accepted_answers, cefr_level = excluded.cefr_level, x = excluded.x, y = excluded.y, "
         "box_x1 = excluded.box_x1, box_y1 = excluded.box_y1, box_x2 = excluded.box_x2, "
         "box_y2 = excluded.box_y2, audio_file = excluded.audio_file",
         (label_id, content_id, position, word, ipa, vi_meaning,
-         json.dumps(accepted, ensure_ascii=False), x, y, *box, audio_file),
+         json.dumps(accepted, ensure_ascii=False), cefr, x, y, *box, audio_file),
     )
 
 

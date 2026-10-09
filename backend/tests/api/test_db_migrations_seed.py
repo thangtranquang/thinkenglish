@@ -54,8 +54,8 @@ def test_seed_counts_and_stable_ids(settings, clock):
     assert [r[0] for r in conn.execute("SELECT id FROM cards ORDER BY id")] == ids
 
     assert first == {
-        "users": 1, "cards": 7, "card_contents": 7,
-        "card_labels": 21, "card_sentences": 21, "image_assets": 7,
+        "users": 1, "cards": 12, "card_contents": 12,
+        "card_labels": 39, "card_sentences": 36, "image_assets": 12,
     }
     assert str(uuid.uuid5(SEED_NAMESPACE, "c1:card")) in ids
     assert conn.execute("SELECT kind FROM users").fetchone()[0] == "system"

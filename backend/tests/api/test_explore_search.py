@@ -7,7 +7,7 @@ from backend.tests.helpers.uploads import make_card
 
 def test_topics_and_filters(reg):
     topics = reg.get("/api/topics").json()["items"]
-    assert sum(t["count"] for t in topics) == 7
+    assert sum(t["count"] for t in topics) == 12
     seed_topic = topics[0]["name"]
     r = reg.get("/api/cards", params={"scope": "explore", "topic": seed_topic.lower(), "limit": 20}).json()
     assert r["has_more"] is False and r["items"]
@@ -25,8 +25,8 @@ def test_topics_and_filters(reg):
 def test_pagination_and_search(reg):
     page = reg.get("/api/cards", params={"limit": 3}).json()
     assert len(page["items"]) == 3 and page["has_more"] is True
-    rest = reg.get("/api/cards", params={"limit": 3, "offset": 6}).json()
-    assert len(rest["items"]) == 1 and rest["has_more"] is False
+    rest = reg.get("/api/cards", params={"limit": 3, "offset": 9}).json()
+    assert len(rest["items"]) == 3 and rest["has_more"] is False
     word = page["items"][0]["labels"][0]["word"]
     found = reg.get("/api/cards", params={"q": word[:3]}).json()["items"]
     assert any(i["id"] == page["items"][0]["id"] for i in found)
