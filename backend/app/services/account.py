@@ -22,7 +22,7 @@ def delete_account(conn: sqlite3.Connection, clock: Clock, settings: Settings, u
     with transaction(conn):
         users.delete(conn, user["id"])
         paths = gc.gc_orphans(conn, clock)
-    gc.unlink_files(settings, paths)
+    gc.unlink_files(settings, paths, conn)
 
 
 def get_user(conn: sqlite3.Connection, user_id: str) -> dict:

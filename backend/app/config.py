@@ -21,6 +21,7 @@ class Settings:
     login_window_seconds: int = 900
     register_per_ip: int = 30
     register_window_seconds: int = 3600
+    guest_create_per_ip_per_hour: int = 60
     max_upload_bytes: int = 5 * 1024 * 1024
     max_pixels: int = 25_000_000
     processing_stale_seconds: int = 120

@@ -28,7 +28,7 @@ def run_maintenance(conn: sqlite3.Connection, clock: Clock, settings: Settings) 
         paths = gc.gc_orphans(conn, clock)
         counts["orphan_contents"] = len(paths)
         counts["rate_events"] = repo.delete_old_rate_events(conn, iso(now - timedelta(days=1)))
-    counts["files_removed"] = gc.unlink_files(settings, paths) + gc.sweep_stray_files(conn, clock, settings)
+    counts["files_removed"] = gc.unlink_files(settings, paths, conn) + gc.sweep_stray_files(conn, clock, settings)
     return counts
 
 

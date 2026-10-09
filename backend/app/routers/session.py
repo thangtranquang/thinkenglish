@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Request, Response
 
 from .. import deps
 from ..schemas.session import BootstrapOut, HeartbeatOut, MeOut
+from ..services import auth as auth_service
 from ..services import identity as identity_service
 from ..services import practice as practice_service
 from . import health_config
@@ -17,7 +18,10 @@ def bootstrap(request: Request, response: Response, _origin: None = Depends(deps
     found = identity_service.resolve(conn, clock.now(), request.cookies.get(deps.SESSION_COOKIE),
                                      request.cookies.get(deps.DEVICE_COOKIE))
     if found is None:
+        ip = deps.client_ip(request)
+        auth_service.check_limit(conn, clock, settings, "guest_ip", ip)
         row, device_token, _ = identity_service.create_guest(conn, clock)
+        auth_service.record_event(conn, clock, "guest_ip", ip)
         deps.set_cookie(response, settings, deps.DEVICE_COOKIE, device_token, deps.DEVICE_COOKIE_DAYS)
     else:
         row, _ = identity_service.touch_usage(conn, clock, settings, found)

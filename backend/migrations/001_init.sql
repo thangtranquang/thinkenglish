@@ -64,7 +64,7 @@ CREATE INDEX ix_usage_user_activity ON usage_sessions (user_id, last_activity_at
 
 CREATE TABLE rate_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  bucket TEXT NOT NULL CHECK (bucket IN ('login_nick', 'login_ip', 'register_ip')),
+  bucket TEXT NOT NULL CHECK (bucket IN ('login_nick', 'login_ip', 'register_ip', 'guest_ip')),
   key_hash TEXT NOT NULL,
   created_at TEXT NOT NULL
 );

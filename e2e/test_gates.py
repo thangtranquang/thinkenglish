@@ -19,6 +19,10 @@ def test_second_visit_gate_is_mandatory_and_register_clears_it(page):
     goto_hash(page, "#/home")
     expect(page.get_by_test_id("gate-second-visit")).to_be_visible()  # navigation cannot leave the gate
 
+    page.reload()  # S.gate must survive a reload without any 403 from another call
+    expect(page.get_by_test_id("gate-second-visit")).to_be_visible()
+    expect(page.locator("nav#nav")).to_be_hidden()
+
     page.get_by_test_id("gate-register").click()
     register_from_gate(page, unique_nick("gate"))
     expect(page.get_by_test_id("home-reflex")).to_be_visible()

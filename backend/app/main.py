@@ -10,7 +10,7 @@ from .clock import Clock, SystemClock
 from .config import Settings
 from .db import connect, init_db
 from .errors import install_error_handlers
-from .middleware import SecurityHeadersMiddleware
+from .middleware import SecurityHeadersMiddleware, UploadSizeLimitMiddleware
 from .routers import auth, cards, health_config, me, practice, session, uploads
 from .seed import seed_all
 
@@ -52,6 +52,7 @@ def create_app(settings: Settings | None = None, *, clock: Clock | None = None,
     app = FastAPI(title="ReflexEnglish", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.state.settings, app.state.clock, app.state.provider = settings, clock, provider
     install_error_handlers(app)
+    app.add_middleware(UploadSizeLimitMiddleware, max_upload_bytes=settings.max_upload_bytes)
     app.add_middleware(SecurityHeadersMiddleware)
 
     for module in (health_config, session, auth, me, cards, uploads, practice):

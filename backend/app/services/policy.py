@@ -6,6 +6,7 @@ exception is the idle rule, where a new session needs ``idle > limit`` strictly.
 from __future__ import annotations
 
 import math
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
@@ -74,3 +75,19 @@ def share_decision(faces: bool, personal_info: bool, nsfw_or_violence: bool, sui
     else:
         return ShareDecision(True, None, "approved")
     return ShareDecision(False, reason, "rejected")
+
+
+_CONTACT_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+|(?<!\w)@\w{2,}|https?:|www\.|\b[\w-]+\.(?:com|net|org|vn|io|me|co)\b", re.I)
+
+
+def unsafe_text(*texts: str | None) -> bool:
+    """True when free text holds contact info or links: phone-like digit runs, emails, URLs, @handles."""
+    for text in texts:
+        if not text:
+            continue
+        if _CONTACT_RE.search(text):
+            return True
+        for run in re.findall(r"\+?\d[\d\s.()-]*\d", text):
+            if sum(c.isdigit() for c in run) >= 8:
+                return True
+    return False

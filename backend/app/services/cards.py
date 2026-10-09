@@ -18,6 +18,7 @@ SHARE_MESSAGES = {
     "faces": "Ảnh có khuôn mặt nhận diện được nên không thể chia sẻ công khai.",
     "personal_info": "Ảnh có thông tin cá nhân nên không thể chia sẻ công khai.",
     "unsuitable": "Ảnh không phù hợp với học sinh nên không thể chia sẻ công khai.",
+    "text": "Tiêu đề hoặc từ vựng có thông tin liên lạc hoặc liên kết nên không thể chia sẻ công khai.",
 }
 
 
@@ -168,6 +169,9 @@ def share(conn: sqlite3.Connection, clock: Clock, user_id: str, card_id: str) ->
                                          bool(safety.get("unsuitable")), True)
         reason = decision.reason or "unsuitable"
         raise AppError(422, "share_not_allowed", reason=reason, fields={"message": SHARE_MESSAGES[reason]})
+    labels = content_repo.labels_for(conn, [row["content_id"]])[row["content_id"]]
+    if policy.unsafe_text(row["title"], *(lab["word"] for lab in merged_labels(labels, row["label_overrides"]))):
+        raise AppError(422, "share_not_allowed", reason="text", fields={"message": SHARE_MESSAGES["text"]})
     if row["visibility"] != "public":
         repo.set_visibility(conn, card_id, "public", iso(clock.now()))
     return detail(conn, user_id, repo.get_card(conn, card_id, user_id))

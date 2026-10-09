@@ -27,10 +27,14 @@ def gc_orphans(conn: sqlite3.Connection, clock: Clock) -> list[str]:
     return paths
 
 
-def unlink_files(settings: Settings, storage_paths: list[str]) -> int:
+def unlink_files(settings: Settings, storage_paths: list[str], conn: sqlite3.Connection) -> int:
+    """Unlink files, skipping any path a remaining image_assets row still references (cleaned images are shared)."""
     base = Path(settings.data_dir).resolve()
     removed = 0
+    still_used = set(repo.all_storage_paths(conn))
     for sp in storage_paths:
+        if sp in still_used:
+            continue
         target = _resolve(base, sp)
         if base in target.parents and target.is_file():
             target.unlink()

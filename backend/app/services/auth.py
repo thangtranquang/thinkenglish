@@ -36,6 +36,8 @@ def _limit_and_window(settings: Settings, bucket: str) -> tuple[int, int]:
         return settings.login_fail_per_nickname, settings.login_window_seconds
     if bucket == "login_ip":
         return settings.login_fail_per_ip, settings.login_window_seconds
+    if bucket == "guest_ip":
+        return settings.guest_create_per_ip_per_hour, 3600
     return settings.register_per_ip, settings.register_window_seconds
 
 
