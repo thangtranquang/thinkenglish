@@ -27,13 +27,14 @@ def test_pragmas_on_every_connection(settings, clock):
             conn.close()
 
 
-def test_init_db_twice_leaves_one_migration_row(settings, clock):
+def test_init_db_twice_records_each_migration_once(settings, clock):
     init_db(settings.db_path, clock)
     init_db(settings.db_path, clock)
     conn = connect(settings.db_path)
     rows = conn.execute("SELECT version FROM schema_migrations").fetchall()
     conn.close()
-    assert len(rows) == 1
+    from backend.app.db import MIGRATIONS_DIR
+    assert len(rows) == len(list(MIGRATIONS_DIR.glob("*.sql")))
 
 
 def test_seed_counts_and_stable_ids(settings, clock):
