@@ -84,11 +84,12 @@ export function render(ctx) {
     }),
   );
 
-  const submitBtn = el("button", { type: "submit", class: "btn", "data-testid": "register-submit" }, "Vào học");
+  const submitBtn = el("button", { type: "submit", class: "btn", "data-testid": "register-submit" }, "Tạo tài khoản");
 
   function showError(text, focusEl) {
     err.textContent = text;
-    if (focusEl) focusEl.focus();
+    err.scrollIntoView({ block: "center", behavior: "smooth" }); // the message sits right above the button
+    if (focusEl) focusEl.focus({ preventScroll: true });
   }
 
   async function onSubmit(ev) {
@@ -129,11 +130,11 @@ export function render(ctx) {
     el("p", { class: "sub" }, "Dùng biệt danh, không dùng tên thật. Ảnh của bạn mặc định chỉ mình bạn xem được."),
     el("label", { class: "f", for: "nick" }, "Biệt danh", nick),
     el("label", { class: "f", for: "pw" }, "Mật khẩu (ít nhất 8 ký tự)", pw),
-    err,
     el("div", { class: "f", style: "display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700" }, "Chọn avatar", avs),
     el("label", { class: "f", for: "year" }, "Năm sinh", year),
     consent,
     el("div", { class: "f", style: "display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700" }, "Trình độ hiện tại", lv),
+    err,
     submitBtn,
     el("button", { type: "button", class: "link", "data-testid": "register-login-link", onclick: () => ctx.navigate("login", { query: reason ? { reason } : {} }) }, "Đã có tài khoản? Đăng nhập"),
   );
