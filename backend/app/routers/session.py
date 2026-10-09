@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from .. import deps
 from ..schemas.session import BootstrapOut, HeartbeatOut, MeOut
 from ..services import identity as identity_service
+from ..services import practice as practice_service
 from . import health_config
 
 router = APIRouter(prefix="/api/session")
@@ -23,7 +24,7 @@ def bootstrap(request: Request, response: Response, _origin: None = Depends(deps
     if (found is None or found.via != "session") and request.cookies.get(deps.SESSION_COOKIE):
         deps.clear_cookie(response, settings, deps.SESSION_COOKIE)  # dead session cookie: reveal nothing
     csrf_token = deps.ensure_csrf_cookie(request, response)
-    me = MeOut.from_row(row)
+    me = MeOut.from_row(row, practice_service.profile_stats(conn, clock, row["id"]))
     return BootstrapOut(**me.model_dump(), csrf_token=csrf_token, config=health_config.config(request))
 
 

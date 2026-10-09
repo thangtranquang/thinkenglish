@@ -59,3 +59,16 @@ def has_progress(conn: sqlite3.Connection, user_id: str) -> bool:
 
 def delete(conn: sqlite3.Connection, user_id: str) -> None:
     conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+
+
+def set_hide_timer(conn: sqlite3.Connection, user_id: str, hide_timer: bool) -> None:
+    conn.execute("UPDATE users SET hide_timer = ? WHERE id = ?", (1 if hide_timer else 0, user_id))
+
+
+def update_profile(conn: sqlite3.Connection, user_id: str, avatar_key: str | None, cefr_level: str | None) -> None:
+    conn.execute("UPDATE users SET avatar_key = COALESCE(?, avatar_key), cefr_level = COALESCE(?, cefr_level) "
+                 "WHERE id = ?", (avatar_key, cefr_level, user_id))
+
+
+def set_reflex_level_unlocked(conn: sqlite3.Connection, user_id: str, level: int) -> None:
+    conn.execute("UPDATE users SET reflex_level_unlocked = ? WHERE id = ?", (level, user_id))

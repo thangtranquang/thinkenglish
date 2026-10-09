@@ -7,6 +7,7 @@ from ..repositories import users
 from ..schemas.auth import LoginIn, RegisterIn
 from ..schemas.session import MeOut
 from ..services import auth as auth_service
+from ..services import practice as practice_service
 from . import health_config
 
 router = APIRouter(prefix="/api/auth")
@@ -36,7 +37,8 @@ def register(data: RegisterIn, request: Request, response: Response, _limit: Non
         raise AppError(401, "no_session")
     token = auth_service.register(conn, clock, settings, user.row, data, health_config.AVATARS)
     _open_session(response, settings, token)
-    return MeOut.from_row(users.get(conn, user.id))
+    row = users.get(conn, user.id)
+    return MeOut.from_row(row, practice_service.profile_stats(conn, clock, row["id"]))
 
 
 @router.post("/login", response_model=MeOut)
@@ -48,7 +50,7 @@ def login(data: LoginIn, request: Request, response: Response, _csrf: None = Dep
                                     deps.client_ip(request))
     auth_service.logout(conn, clock, request.cookies.get(deps.SESSION_COOKIE))  # retire the old session
     _open_session(response, settings, token)
-    return MeOut.from_row(row)
+    return MeOut.from_row(row, practice_service.profile_stats(conn, clock, row["id"]))
 
 
 @router.post("/logout", status_code=204)

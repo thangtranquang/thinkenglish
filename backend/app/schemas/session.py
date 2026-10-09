@@ -11,6 +11,11 @@ class UserOut(BaseModel):
     avatar_key: str | None
     cefr_level: str | None
     hide_timer: bool
+    streak: int = 0
+    xp: int = 0
+    level: int = 1
+    level_progress: float = 0.0
+    reflex_level_unlocked: int = 1
 
 
 class GateOut(BaseModel):
@@ -24,10 +29,13 @@ class MeOut(BaseModel):
     gate: GateOut | None
 
     @classmethod
-    def from_row(cls, row: dict) -> "MeOut":
-        """Build from a users row. Whitelists fields: hashes, tokens, guardian data never leave."""
+    def from_row(cls, row: dict, stats: dict | None = None) -> "MeOut":
+        """Build from a users row (+ optional computed stats: streak/xp/level/level_progress).
+
+        Whitelists fields: hashes, tokens, guardian data never leave."""
         user = UserOut(id=row["id"], kind=row["kind"], nickname=row["nickname"], avatar_key=row["avatar_key"],
-                       cefr_level=row["cefr_level"], hide_timer=bool(row["hide_timer"]))
+                       cefr_level=row["cefr_level"], hide_timer=bool(row["hide_timer"]),
+                       reflex_level_unlocked=row["reflex_level_unlocked"], **(stats or {}))
         gate = GateOut(reason="second_visit") if row["kind"] == "guest" and row["gate_required_at"] else None
         return cls(user=user, is_guest=row["kind"] == "guest", gate=gate)
 
