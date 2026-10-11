@@ -6,3 +6,5 @@ But overall, we wanted u to take a picture of things in daily life everyday, the
 This is still a demo version, so if u have any feedbacks, questions or suggestions, please tell us.
 Use this website, the items in this git pages is not necessary to do to get this website.
 Website "https://thinkenglish.alanvn.com/"
+Although we did have streak but we wont send any notifications as we dont want to pressure u like duolingo, as this is ur own choice of free will.
+Thank you for reading these long sentences, bye and have a good day with my website and ur life.
