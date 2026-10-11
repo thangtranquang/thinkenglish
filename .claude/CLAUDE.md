@@ -8,7 +8,7 @@ Source of truth: `docs/Product_Specification_ReflexEnglish_v1.1.docx` (readable 
 - **Backend:** Python 3.11+, FastAPI, SQLite (stdlib `sqlite3`, WAL mode, foreign keys ON), pydantic v2 for every request/response model.
 - **Passwords:** stdlib `hashlib.scrypt` with per-user salt. No other crypto deps.
 - **Frontend:** vanilla JS (ES modules) + plain CSS, served as static files by FastAPI. No build step, no framework.
-- **AI:** one provider interface (`AIProvider.analyze(image_bytes) -> AnalysisResult`). `GeminiProvider` is used only when `GEMINI_API_KEY` is set; `MockProvider` is deterministic and is what all tests use.
+- **AI:** one provider interface (`AIProvider.analyze(image_bytes) -> AnalysisResult`). `OpenAICompatProvider` is used when `LLM_BASE_URL` + `LLM_API_KEY` are set, else `GeminiProvider` when `GEMINI_API_KEY` is set; `MockProvider` is deterministic and is what all tests use.
 - **Tests:** pytest + httpx `TestClient` for backend; Playwright (Python) for e2e.
 
 ## Commands (repo root)
@@ -18,12 +18,13 @@ Source of truth: `docs/Product_Specification_ReflexEnglish_v1.1.docx` (readable 
 - Maintenance: `python -m backend.app.maintenance` (idempotent cleanup; also runs once at startup).
 
 ## Environment variables (`Settings.from_env`, `backend/app/config.py`)
-`.env` is NOT auto-loaded: only real environment variables are read (`.env.example` is a template). All optional.
+A git-ignored `.env` in the repo root is read at startup; real environment variables win over it (even when empty). `.env.example` is the template. All optional.
 | Variable | Default | Meaning |
 |---|---|---|
 | `APP_ORIGIN` | `http://localhost:8000` | Origin check + `Secure` cookies when not localhost |
 | `DATA_DIR` / `DB_PATH` | `data` / `<DATA_DIR>/reflex.db` | Images and SQLite file |
-| `GEMINI_API_KEY` | unset | Unset → deterministic `MockProvider`; set → `GeminiProvider` |
+| `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL` / `LLM_TIMEOUT_SECONDS` | unset / unset / `qwen3.6-35b-a3b` / 120 | OpenAI-compatible vision endpoint (`OpenAICompatProvider`, thinking disabled); wins over Gemini |
+| `GEMINI_API_KEY` | unset | Used when no LLM endpoint is set; with neither, deterministic `MockProvider` |
 | `SESSION_IDLE_SECONDS` | 1800 | Idle gap that starts a new usage session |
 | `GUEST_FREE_SESSIONS` | 1 | Write-sessions a guest gets before the mandatory gate |
 | `LOGIN_FAIL_PER_NICKNAME` / `LOGIN_FAIL_PER_IP` / `LOGIN_WINDOW_SECONDS` | 5 / 100 / 900 | Login failure limits |

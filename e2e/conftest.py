@@ -76,7 +76,7 @@ def server(tmp_path_factory):
     origin = f"http://127.0.0.1:{port}"
     data = tmp_path_factory.mktemp("e2e_data")
     env = {k: v for k, v in os.environ.items() if k != "GEMINI_API_KEY"}
-    env.update(APP_ORIGIN=origin, DATA_DIR=str(data), DB_PATH=str(data / "e2e.db"), SESSION_IDLE_SECONDS="3",
+    env.update(GEMINI_API_KEY="", LLM_API_KEY="", LLM_BASE_URL="", APP_ORIGIN=origin, DATA_DIR=str(data), DB_PATH=str(data / "e2e.db"), SESSION_IDLE_SECONDS="3",
                GUEST_FREE_SESSIONS="1", SCRYPT_N="1024", PYTHONUNBUFFERED="1")
     log = open(data / "server.log", "w", encoding="utf-8")
     proc = subprocess.Popen([sys.executable, "-m", "uvicorn", "backend.app.main:app", "--host", "127.0.0.1",

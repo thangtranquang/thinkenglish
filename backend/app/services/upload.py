@@ -94,7 +94,10 @@ def current_status(conn: sqlite3.Connection, settings: Settings, clock: Clock, c
 def provider_for(state):
     """The app-wide AI provider (Gemini only when a key is configured, else the mock)."""
     if state.provider is None:
-        state.provider = select_provider(state.settings.gemini_api_key)
+        cfg = state.settings
+        state.provider = select_provider(cfg.gemini_api_key, llm_base_url=cfg.llm_base_url,
+                                         llm_api_key=cfg.llm_api_key, llm_model=cfg.llm_model,
+                                         llm_timeout=cfg.llm_timeout_seconds)
     return state.provider
 
 

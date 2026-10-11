@@ -8,12 +8,30 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def read_dotenv(path: Path) -> dict[str, str]:
+    """Minimal KEY=VALUE parser (comments, optional quotes); a missing file gives an empty dict."""
+    values: dict[str, str] = {}
+    if not path.is_file():
+        return values
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        values[key.strip()] = value.strip().strip("\"'")
+    return values
+
+
 @dataclass(frozen=True)
 class Settings:
     app_origin: str = "http://localhost:8000"
     data_dir: Path = ROOT / "data"
     db_path: Path = ROOT / "data" / "reflex.db"
     gemini_api_key: str | None = field(default=None, repr=False)
+    llm_base_url: str | None = None  # OpenAI-compatible endpoint, e.g. https://host/v1
+    llm_api_key: str | None = field(default=None, repr=False)
+    llm_model: str = "qwen3.6-35b-a3b"
+    llm_timeout_seconds: int = 120
     session_idle_seconds: int = 1800
     guest_free_sessions: int = 1
     login_fail_per_nickname: int = 5
@@ -33,8 +51,12 @@ class Settings:
         return urlsplit(self.app_origin).hostname in {"localhost", "127.0.0.1", "::1"}
 
     @classmethod
-    def from_env(cls, env: Mapping[str, str] | None = None) -> "Settings":
-        env = os.environ if env is None else env
+    def from_env(cls, env: Mapping[str, str] | None = None, dotenv_path: Path | None = None) -> "Settings":
+        """Real environment variables win over the optional `.env` file (an empty value counts as set)."""
+        if env is None:
+            env = {**read_dotenv(dotenv_path or ROOT / ".env"), **os.environ}
+        elif dotenv_path is not None:
+            env = {**read_dotenv(dotenv_path), **env}
         values: dict = {}
         for f in fields(cls):
             raw = env.get(f.name.upper())
